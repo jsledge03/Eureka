@@ -1,0 +1,142 @@
+AGENT MESSAGE 2 — Robust search + Push notifications (iPhone PWA) + progress updates
+
+Paste into Replit Agent:
+
+MESSAGE 2
+
+Implement robust global search for tasks/goals/habits and add notification capability for reminders and progress updates in a way that works for iPhone PWA. Avoid breaking offline/persistence. If a feature cannot be fully supported on iPhone PWA without extra setup, implement a fully functional fallback (local reminders + in-app nudges) and clearly label it.
+
+A) Robust search (Tasks, Goals, Habits)
+
+Add a global search entry point:
+
+Search icon in top header (or within Tasks/Goals/Habits pages)
+
+Opens a full-screen search sheet optimized for iPhone
+
+Search requirements:
+
+Unified search across:
+
+Tasks (title, notes, labels, due date)
+
+Goals (title, intention, domain)
+
+Habits (title, trigger, minimum version, friction/cue notes)
+
+Real-time results as you type
+
+Filter chips:
+
+Type: All / Tasks / Goals / Habits
+
+Domain filters
+
+Labels filters (for tasks)
+
+Status filters: Overdue / Today / Upcoming / Completed (tasks)
+
+Result actions:
+
+Tap result opens detail sheet
+
+Long-press optional: quick actions (complete, schedule, edit)
+
+Performance:
+
+Debounce input
+
+Use precomputed searchable text fields if needed
+
+QA:
+
+Search for a label returns tasks
+
+Search for a goal returns goal + linked habits visible
+
+Search works after reload
+
+B) Push notifications + reminders (iPhone-only reality check + implementation)
+
+Implement reminders as a two-tier system:
+
+Tier 1 (Always works): Local in-app reminders
+
+Scheduled reminder queue stored locally
+
+Shows as in-app banner + Coach nudge when the app is opened
+
+“Reminder Center” in Coach tab: upcoming reminders, missed reminders
+
+Tier 2 (True push notifications for iPhone PWA)
+iOS PWA web push requires:
+
+HTTPS
+
+User permission
+
+Service worker push handling
+
+Web Push subscription + VAPID keys + server endpoint to send pushes
+
+Implement if feasible in this app environment:
+
+Add “Enable Notifications” control in Settings/Coach
+
+Request permission at user-initiated click only
+
+Register push subscription and store it
+
+Provide a simple server route to send pushes (for personal use):
+
+Send test notification button
+
+Send daily “My Day” reminder (time configurable)
+
+Send overdue summary notification (1/day max)
+
+Send Sunday Reset reminder (Sunday morning)
+
+If server-based push is not feasible without external setup:
+
+Implement Tier 1 fully and label Tier 2 as “Requires hosting push sender” but keep UI safe and non-broken.
+
+Still allow notification-like behavior via in-app reminders.
+
+C) “Important reminders and progress updates”
+
+Add notification events (or in-app reminders) for:
+
+Daily “My Day” start (morning)
+
+Midday recalibrate prompt (optional)
+
+Evening close the loop (optional)
+
+Overdue summary (gentle, not shaming)
+
+Sunday Reset reminder
+
+Quarter halfway checkpoint (optional)
+
+Progress updates must be non-noisy:
+
+Max 1 push/day or user-configurable frequency
+
+Batch updates into a single message
+
+D) Safety + regression
+
+Must not break offline mode
+
+Must not break existing date logic (Today/Overdue)
+
+Must not introduce console errors if notifications are not enabled
+
+Deliver:
+
+Where to enable notifications
+
+What works as Tier 1 vs Tier 2 (if needed)
+
+How to test with a “Send test notification” button

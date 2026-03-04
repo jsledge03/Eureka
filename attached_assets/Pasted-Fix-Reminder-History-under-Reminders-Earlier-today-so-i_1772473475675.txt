@@ -1,0 +1,86 @@
+Fix Reminder History under Reminders → “Earlier today” so it shows ALL notifications/reminders that were clicked Done today, displays the correct reminder name for each, includes “Daily Overdue Summary” (and others), and resets each day. Do not break scheduling, toggles, or banners. Regression-safe fix.
+
+1) Separate reminder templates from reminder events (source of truth)
+
+Ensure the UI for “Earlier today” is powered by a ReminderEvent log, not by templates.
+
+Define ReminderTemplate:
+	•	id (stable key)
+	•	name (e.g., “Start Your Day”, “Daily Overdue Summary”)
+	•	type (enum)
+	•	enabled
+	•	schedule config
+
+Define ReminderEvent:
+	•	eventId (unique)
+	•	templateId
+	•	name (denormalized copy for resilience)
+	•	type
+	•	scheduledFor (timestamp)
+	•	firedAt (timestamp)
+	•	status: fired | done | snoozed | missed
+	•	completedAt (timestamp optional)
+	•	dateKey (local YYYY-MM-DD)
+
+When a reminder fires (banner appears), create a ReminderEvent record.
+When user taps Done, update THAT event record status=done and set completedAt.
+
+2) Fix “Done” action to update the correct event
+
+Right now it appears only “Start Your Day” is being shown/marked. Fix so:
+	•	Done updates the specific ReminderEvent the user interacted with (by eventId),
+	•	Not by reminder type or template alone.
+
+QA:
+	•	Trigger Start Your Day + Daily Overdue Summary + Close the Loop test reminders.
+	•	Tap Done on each.
+	•	“Earlier today” must show all three with correct names.
+
+3) Fix name rendering (why it shows blank/incorrect)
+
+In “Earlier today” list rendering:
+	•	Display event.name first (most reliable).
+	•	Fallback to template.name by templateId if needed.
+	•	If neither exists, display “Reminder” (never blank).
+
+4) Ensure “Earlier today” filter uses local dateKey and resets daily
+
+Implement reliable local dateKey logic (same as Today tasks):
+	•	dateKey = local YYYY-MM-DD
+
+“Earlier today” should show:
+	•	events where dateKey === todayKey AND status === done (or done + snoozed depending on design)
+
+Reset behavior:
+	•	It naturally resets daily by filtering on todayKey.
+	•	Do NOT delete history; just show yesterday under “Previous days” (optional).
+If you currently want hard reset (hide prior days entirely), then store only last N days.
+
+5) Ensure Daily Overdue Summary appears
+
+Verify:
+	•	When the Daily Overdue Summary reminder fires, it creates an event.
+	•	When marked done, it appears in Earlier today.
+
+If it isn’t firing, add a controlled “fire test event” button to validate event logging independent of scheduling.
+
+6) UI improvements
+	•	In Reminders screen, show sections:
+	•	Upcoming
+	•	Earlier today (Done)
+	•	Missed (if any)
+	•	Each row shows:
+	•	name
+	•	time completed
+	•	optional icon
+
+7) Regression checklist
+	•	Toggling reminders still schedules correctly
+	•	No duplicate X icons
+	•	No console errors
+	•	Events persist after reload
+	•	Earlier today shows multiple completed reminders correctly
+
+Deliver:
+	•	Explanation of root cause (why only Start Your Day showed)
+	•	Where to test (step list)

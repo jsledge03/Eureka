@@ -1,0 +1,92 @@
+AGENT MESSAGE 1 — Subtle color psychology + Identity language + Coach voice
+
+Paste into Replit Agent:
+
+MESSAGE 1
+
+Do a premium “tone + visual system” refinement pass with strict regression safety. Do not change data models or core logic unless necessary. No gamification overload. Keep everything iPhone-first and accessible.
+
+A) Subtle color psychology per metric (no childish gamification)
+
+Implement a restrained semantic color system used consistently across the app (cards, chips, small accents, progress bars). Avoid neon, gradients, badges, confetti.
+
+Metrics + colors (subtle, accessible):
+
+Momentum: calm green (growth/forward motion)
+
+Rhythm: steady blue (consistency/stability)
+
+Identity Alignment: purple (meaning/values/identity)
+
+Energy: warm amber (capacity/heat)
+
+Overdue: muted red (urgency without panic)
+
+Grace: soft teal (compassion + accountability)
+Rules:
+
+Use color only as accents (left border, small pill, icon tint, thin progress fill)
+
+Ensure contrast meets accessibility; never rely on color alone (include label + icon)
+
+Keep the same metric color everywhere (Coach, Review, My Day, Goals)
+
+QA:
+
+Verify colors render on iPhone and remain legible in dark/light mode if supported.
+
+B) Tighten Identity page language so it feels foundational (not decorative)
+
+Update copy + structure to reinforce: identity → values/ethics → domains → goals → habits → tasks.
+
+Add concise headings + prompts:
+
+“Who I am becoming” (future self in present tense; 1–3 sentences)
+
+“Who I refuse to become” (optional boundary; 1 sentence)
+
+Values & ethics I live by (chips)
+
+Character commitments (3–5 short statements: “I keep promises to myself.”)
+
+Behavioral proof this week (auto-surface 2–4 linked actions that support identity)
+
+Replace any fluffy wording with grounded language:
+
+“This is the foundation. Goals are downstream from identity.”
+
+Integrate with Coach:
+
+Coach references identity (“This supports becoming ___” / “This is off-track from ___”)
+
+C) Refine Coach voice to match the warm strategic tone
+
+Update Coach microcopy to be:
+
+compassionate but direct
+
+strategic, not motivational spam
+
+reflective, not robotic
+
+Voice rules:
+
+Avoid: “You should…” “Try harder” “Great job!” spam
+
+Prefer: “Let’s recalibrate.” “What’s the smallest win here?” “Protect the system.”
+
+Templates:
+
+If behind: “You’re not failing — your system needs adjustment. Let’s reduce scope and regain rhythm.”
+
+If overload: “Too many commitments are competing. Let’s choose what matters this week.”
+
+If low energy: “Today is a Minimum Version day. That’s discipline, not weakness.”
+
+Update tooltips, Coach cards, and review prompts to match this voice consistently.
+
+Deliver:
+
+a short list of changed copy points
+
+confirm nothing functional broke

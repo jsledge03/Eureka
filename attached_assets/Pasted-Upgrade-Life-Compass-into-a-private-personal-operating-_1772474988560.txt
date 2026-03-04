@@ -1,0 +1,310 @@
+Upgrade Life Compass into a private, personal operating system by implementing and integrating the following five features end-to-end:
+	1.	Season Mode
+	2.	Keystone Gravity Mapping
+	3.	Identity Proof Timeline
+	4.	Adaptive Capacity Forecasting
+	5.	Friction Mapping
+
+This must be done in a psychologically sound, intuitive, iPhone-first way. No gimmicks. No social features. No accounts. Everything local/private by default. Do not break existing working features (Today/Overdue, Sunday Reset, Coach & Insights tab, Review intelligence accept actions, Goal progress auto/manual, Identity). Implement regression-safe changes, run code audits, fix any broken logic, and do not stop until everything works reliably.
+
+⸻
+
+0) Hard Requirements
+	•	Full functionality: no dead buttons, no incomplete flows.
+	•	Local-first privacy: all data stored locally (localStorage/IndexedDB), no external tracking.
+	•	iPhone-first UX: safe areas, scrollable sheets, large touch targets.
+	•	Stability: no console errors, no duplicate close buttons, no broken filters.
+	•	Every new feature must:
+	•	have clear UI entry points,
+	•	be integrated into Coach & Insights and Review,
+	•	have tooltips explaining logic,
+	•	have QA steps that pass after reload.
+
+⸻
+
+1) Season Mode Engine (Core Context Layer)
+
+1A) What it is
+
+Season Mode represents the user’s current life context:
+	•	Build (default)
+	•	Stabilize
+	•	Recover
+	•	Sprint
+	•	Reposition
+
+1B) Data model
+
+Add:
+	•	seasonMode: enum
+	•	seasonStartDate
+	•	seasonNotes (optional)
+	•	seasonDefaults object (thresholds + expectations)
+
+1C) UI integration
+
+Add Season Mode selector:
+	•	Location: Coach & Insights at top near North Star OR My Day header
+	•	UX: a pill (“Season: Build ▾”) opens a bottom sheet with:
+	•	mode descriptions
+	•	what changes (expectations)
+	•	“Set Season” button
+
+1D) How Season changes behavior (must be real)
+
+Season Mode must modify:
+	•	default grace days/week
+	•	drift threshold sensitivity
+	•	notification frequency (gentle)
+	•	daily rhythm expectations (minimum commitments)
+	•	recommended task load for Today
+
+Example defaults (tunable later):
+	•	Build: normal drift sensitivity, grace=2, task target=5
+	•	Sprint: higher task target, lower grace (but still available), higher drift sensitivity for overload
+	•	Recover: low task target, higher grace, drift focuses on recovery + reflection rather than productivity
+
+These defaults must be visible and editable in advanced settings.
+
+⸻
+
+2) Friction Mapping (Behavior Redesign Layer)
+
+2A) Capture friction at the moment it matters
+
+When a habit is missed OR a task is deferred:
+Prompt a lightweight friction capture (optional, 1 tap):
+	•	Reason tags: Time, Energy, Environment, Emotion, Overload, Forgetfulness, Unclear next step
+	•	Optional short note
+	•	Auto capture context:
+	•	time of day
+	•	day of week
+	•	energy rating (if available)
+
+Store as FrictionEvent:
+	•	entityType (habit/task)
+	•	entityId
+	•	dateKey
+	•	reasonTag
+	•	note
+	•	context (day/time/energy/season)
+
+2B) Friction insights UI
+
+Add “Friction Patterns” section inside Coach & Insights:
+	•	Top recurring reasons (last 14 days)
+	•	Top 3 entities with recurring friction
+	•	“Suggested redesign” actions (clickable):
+	•	reschedule
+	•	add cue/environment note
+	•	convert to Minimum Version
+	•	reduce frequency
+	•	create supporting task (“Prep clothes”, “Set reminder”, etc.)
+
+2C) Guardrails
+	•	Never shame language.
+	•	Limit prompts to avoid annoyance:
+	•	ask at most 1 friction prompt/day unless user opts in.
+
+⸻
+
+3) Identity Proof Timeline (Evidence Layer)
+
+3A) Purpose
+
+Create a timeline of “proof” moments supporting the active identity statement.
+
+3B) What counts as proof (rules)
+
+A ProofEvent is created when:
+	•	user completes a keystone habit
+	•	user completes a linked goal task
+	•	user adapts wisely on low energy (uses Minimum Version + completes 1 aligned action)
+	•	user completes Sunday Reset
+	•	user completes Close the Loop
+	•	user reduces scope when overloaded (triage action applied)
+
+ProofEvent structure:
+	•	dateKey
+	•	title (human readable)
+	•	linkedGoalId/habitId/taskId (optional)
+	•	domain
+	•	whyItMatters string (“Supports becoming ___”)
+	•	source (“habit completion”, “reset”, “reflection”, etc.)
+
+3C) UI integration
+
+On Identity page:
+	•	Add “Proof Timeline” section
+	•	by week grouping
+	•	tap item opens linked goal/habit/task
+	•	In Coach:
+	•	show 2–3 recent proof items as reinforcement (not spam)
+
+⸻
+
+4) Keystone Gravity Mapping (What Actually Moves the System)
+
+4A) Definition
+
+Identify which habits most strongly influence positive outcomes:
+	•	higher rhythm
+	•	higher identity alignment
+	•	fewer overdue tasks
+	•	better energy trend (optional)
+
+4B) Computation (local + simple, no fake precision)
+
+For each habit:
+Compute a “Gravity Score” based on correlation-like heuristics over last 28 days:
+	•	Compare days habit completed vs not completed:
+	•	avg rhythm next day
+	•	avg overdue count change
+	•	avg identity alignment
+Keep it simple and robust; avoid heavy stats.
+
+GravityScore output:
+	•	0–100
+	•	label: High leverage / Medium / Low
+
+4C) UI integration
+
+In Habits Hub:
+	•	Add “Keystone Gravity” indicator next to habits (subtle icon + label)
+	•	Add a “High Leverage” filter
+In Coach:
+	•	Suggest focusing on 1–2 high leverage habits during overload or reset
+
+⸻
+
+5) Adaptive Capacity Forecasting (Anticipatory Coaching)
+
+5A) What it does
+
+Forecast next-week risk:
+	•	Overload risk
+	•	Drift risk
+	•	Recovery need
+
+5B) Inputs
+
+Use last 14 days:
+	•	weekly vibe check signals (energy/stress/confidence)
+	•	daily energy + capacity mode
+	•	overdue trend
+	•	friction frequency
+	•	drift alerts
+	•	season mode
+
+5C) Outputs
+
+Create a “Forecast” card in Coach & Insights:
+	•	“Next week outlook: Stable / Risk of overload / Recovery needed”
+	•	Provide 2–3 recommended actions:
+	•	reduce active goals
+	•	run Sunday Reset early
+	•	increase grace
+	•	focus mode
+	•	move 2 habits to Minimum Version
+
+Each action must be clickable and apply real changes.
+
+⸻
+
+6) Deep Integration Points (must feel unified)
+
+6A) Coach & Insights becomes the OS dashboard
+
+Add a top-level layout:
+	•	North Star (identity + quarter focus)
+	•	Season Mode
+	•	Forecast
+	•	Drift alerts (max 3)
+	•	Keystone Gravity highlights
+	•	Friction patterns
+	•	Proof highlights
+	•	Next Steps (actions) — always functional
+
+6B) Review becomes the governance layer
+
+In Review:
+	•	include Season mode visibility
+	•	weekly vibe check influences forecast + drift thresholds
+	•	Sunday reset generates tasks AND updates commitments consistent with season
+
+6C) My Day becomes execution layer
+
+My Day should:
+	•	show season-aware task target
+	•	show 1–2 high leverage habits (Keystone Gravity)
+	•	encourage Minimum Version on low energy days
+	•	friction capture on misses (lightweight)
+	•	close the loop generates proof events
+
+⸻
+
+7) Tooltips (required)
+
+Add ⓘ tooltips explaining:
+	•	Season Mode impact
+	•	Gravity Score meaning (simple, not fake-science)
+	•	Forecast criteria (signals used)
+	•	Proof Timeline (what counts)
+	•	Friction mapping (why it helps redesign)
+
+Tooltips must be bottom-sheet style on iPhone and scrollable.
+
+⸻
+
+8) Code Audit + QA (do not stop until clean)
+
+8A) Audit requirements
+	•	Remove duplicate close icons (X)
+	•	Ensure all buttons have handlers
+	•	Ensure no console errors
+	•	Ensure all derived views mutate source of truth properly
+	•	Ensure dateKey logic is local and consistent
+
+8B) QA script (must pass)
+	1.	Set Season Mode to Recover; verify:
+	•	task target reduces
+	•	grace days adjust
+	•	coach language adapts
+	2.	Miss a habit; friction prompt appears; select “Energy”; verify:
+	•	friction event saved
+	•	friction patterns show it
+	3.	Complete a keystone habit; verify:
+	•	proof event created and appears in Identity timeline
+	4.	Complete habit for several days; verify:
+	•	gravity score calculates and displays
+	5.	Trigger forecast (create overdue trend + high stress); verify:
+	•	forecast changes
+	•	recommended actions work
+	6.	Reload app:
+	•	all features persist
+	•	no drift/forecast recalculation errors
+	•	no UI breaks
+
+At the end, provide:
+	•	list of features added
+	•	where to find them
+	•	QA results
+	•	confirmation: no regressions
+
+END MESSAGE
+
+⸻
+
+Optional (but recommended) “Safety rails”
+	•	Rate-limit prompts (friction prompts, drift alerts) to avoid fatigue.
+	•	Keep metrics calm and meaningful; never penalize low-energy days.
+
+⸻
+
+If you want, after the Agent implements this, I can help you “tune”:
+	•	Season defaults
+	•	Gravity weights
+	•	Drift thresholds
+	•	Forecast thresholds
+
+…so it matches your actual life cadence and never feels noisy.

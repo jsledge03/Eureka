@@ -1,0 +1,99 @@
+Fix iPhone UX for quarter selection/history, finish the Review system, and make Sunday Reset fully complete and cross-app impactful.
+
+A) Quarter pill UX (iPhone)
+
+Quarter selection sheet UI:
+
+Q1–Q4 must be spaced with clear touch targets (not smashed). Use a 2x2 grid or stacked buttons with padding.
+
+Add section headers: “Select Quarter”, “Quarter History”.
+
+Quarter History list:
+
+Must be scrollable within the sheet.
+
+Make sure the sheet has a max height (e.g., 80vh) and the history section uses overflow-y auto.
+
+Add “Jump to” actions in each history row (view) and “Clone” on swipe or button.
+
+QA:
+
+Confirm you can scroll history and tap a prior quarter.
+
+B) Review system completion
+
+Review tab should be a complete operating cycle:
+
+Quarter plan (theme, outcomes, constraints, not-to-do)
+
+Quarter goal progress roll-up
+
+Weekly check-ins (quick)
+
+Sunday Reset (deep)
+
+Add “Weekly Check-in” quick sheet (30 seconds):
+
+energy, mood, capacity (Push/Sustain/Recover)
+
+what worked, what slipped, one adjustment
+
+generates 1–2 recommended next steps that link to app actions
+
+C) Sunday Reset MUST complete and drive app changes
+
+Sunday Reset wizard currently breaks before completion. Fix it so it always completes end-to-end.
+
+Flow steps must:
+
+Snapshot: show last week metrics (tasks completed, habits completed, rhythm, grace used)
+
+Focus: user selects 1–2 domains + top 3 outcomes
+
+Recalibrate: for each slipping habit, offer “Switch to Minimum Version (Plan B)” and “Reschedule”
+
+Generate: create suggested tasks for the week and schedule keystone habits
+
+When user finishes:
+
+It must APPLY changes:
+
+Update quarter plan focus fields
+
+Create tasks in Tasks/Today
+
+Update habit schedules if changed
+
+Update Coach recommendations cache
+
+Then navigate to Today or Tasks with a success message: “Reset applied. Let’s win the week.”
+
+If user skips steps, still allow completion with defaults.
+
+D) Goal roll-up progress: Auto + Manual override (both)
+
+Implement dual-mode goal progress:
+
+AUTO progress: calculated from linked tasks/habits completion over the quarter
+
+MANUAL progress: user can set current/target and override
+
+UX:
+
+In goal progress bar card, show a toggle: Auto / Manual
+
+Default Auto if there are linked tasks/habits
+
+If Manual selected, allow editing current/target
+
+Show both values subtly: “Auto estimate: 42%” even when Manual is on, so user can compare.
+
+QA:
+
+Create a goal linked to tasks/habits → auto updates after completions.
+
+Switch to manual → edit values persists.
+
+Switch back to auto works.
+
+Deliver with a “Where to test” checklist.

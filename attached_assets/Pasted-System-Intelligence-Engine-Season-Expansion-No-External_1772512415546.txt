@@ -1,0 +1,287 @@
+System Intelligence Engine + Season Expansion (No External AI)
+
+MESSAGE
+
+Do NOT implement an OpenAI-based AI Coach Chat. Instead, implement a deterministic “System Intelligence Engine” that provides deep, context-aware guidance using only the app’s internal data and logic.
+
+The goal is real-time strategic guidance without external APIs, without added security complexity, and without conversational bloat. The system must remain holistic-executive, private, stable, and coherent.
+
+Do not introduce regressions. Run a full QA sweep before completion.
+
+⸻
+
+1️⃣ Replace AI Coach Chat with: System Intelligence Engine
+
+This is not chat.
+This is structured intelligence.
+
+It should feel like:
+	•	A strategic advisor
+	•	A self-leadership dashboard
+	•	A mitigation engine
+	•	A pattern interpreter
+
+Not:
+	•	A chatbot
+	•	A motivational assistant
+	•	A long-form text generator
+
+⸻
+
+1A) Intelligence Surfaces (No Chat UI)
+
+Instead of a chat screen, add:
+
+1. “Strategic Advisory” Panel (within Coach & Insights)
+
+Sections:
+	1.	Situation Assessment
+	2.	Root Cause Analysis
+	3.	Mitigation Options (Minimum / Standard / Aggressive)
+	4.	Next Best Actions (with working Apply buttons)
+
+Each section must be derived from:
+	•	Identity Alignment trends
+	•	Rhythm trends
+	•	Drift signals
+	•	Forecast state
+	•	Cognitive load
+	•	Commitment budget
+	•	Friction clustering
+	•	Domain imbalance
+	•	Season mode
+
+⸻
+
+1B) Root Cause Engine (Deterministic Logic)
+
+When drift, overload, or imbalance appears:
+
+The system must classify cause into:
+	•	Capacity overload
+	•	Friction misalignment
+	•	Overcommitment
+	•	Energy mismatch
+	•	Domain neglect
+	•	Recovery deficit
+	•	Identity-behavior tension
+
+Display:
+
+“Primary constraint: Capacity overload driven by 5 active goals + rising overdue tasks.”
+
+No fluff.
+No generic advice.
+
+⸻
+
+1C) Mitigation Options Tiered
+
+Every advisory output must offer:
+
+Minimum Adjustment:
+	•	Smallest viable correction (e.g., convert 1 habit to Minimum Version)
+
+Standard Adjustment:
+	•	Moderate recalibration (e.g., reduce active goals to 3)
+
+Structural Adjustment:
+	•	Larger system redesign (e.g., switch to Stabilize season + enable Strict Mode)
+
+Each must have Apply buttons that:
+	•	Actually mutate state
+	•	Persist
+	•	Provide confirmation
+
+No passive advice.
+
+⸻
+
+1D) Executive Mode vs Reflective Mode Toggle
+
+Instead of chat, add a toggle in Coach:
+	•	Reflective Mode (default) → gentle advisory tone
+	•	Executive Mode → sharper, decisive recommendations
+
+No AI. Just tone + thresholds adjusted.
+
+⸻
+
+2️⃣ Expand Season Mode (Fully Engineered)
+
+Keep current seasons.
+
+Add:
+
+Transition
+
+Life shift (new job, move, major change)
+	•	Higher planning assistance
+	•	Lower execution expectation
+	•	Friction tolerance increased
+
+Maintenance
+
+Stable phase
+	•	Emphasize rhythm stability
+	•	Lower drift sensitivity
+
+Healing
+
+Physical/emotional recovery
+	•	Recovery-first
+	•	Minimal drift alerts
+	•	Higher grace
+
+Exploration
+
+Learning/creative discovery
+	•	Flexible execution
+	•	Emphasize experimentation
+
+Leadership Peak
+
+High responsibility
+	•	Strong boundary enforcement
+	•	Drift sensitivity high for overload
+	•	Strict mode suggestion bias
+
+Focus Sprint (Timeboxed)
+	•	Hard deadline
+	•	Higher daily target
+	•	Auto recovery recommendation at end of sprint window
+
+Each season must adjust:
+	•	Drift sensitivity
+	•	Forecast thresholds
+	•	Commitment budget guidance
+	•	Grace bias
+	•	Notification tone
+	•	Coach tone
+
+Add tooltips explaining each season clearly.
+
+⸻
+
+3️⃣ Deep Strategic Plan Refinement
+
+3A) Strategic Intent (clean)
+
+Keep:
+	•	Optimization focus
+	•	Tradeoffs
+	•	Protection statement
+
+Remove:
+	•	Grace Bank
+	•	Daily Rhythm
+	•	Theme
+
+Ensure Strategic Intent is referenced in:
+	•	Advisory outputs
+	•	Weekly Memo
+	•	Drift interpretation
+	•	Forecast framing
+
+⸻
+
+3B) Strategic Trajectory 2.0 (More Analytical)
+
+Make it show:
+	•	Directional momentum (↑ ↓ →)
+	•	System stability classification
+	•	Risk outlook
+	•	Domain misalignment score
+	•	3 course corrections (Apply buttons)
+
+Must update automatically after:
+	•	Sunday Reset
+	•	Season change
+	•	Major drift event
+	•	Capacity overload
+	•	Habit redesign
+
+⸻
+
+4️⃣ Weekly Executive Memo UX Fix
+
+When clicking “Read Full Memo”:
+	•	Open bottom sheet
+	•	Scrollable
+	•	Swipe down to dismiss
+	•	Date range clearly displayed
+	•	Not routed to Sunday Reset
+
+Memo must include:
+	•	Executive Summary
+	•	Domain balance
+	•	Operational risks
+	•	Strategic leverage
+	•	Next week focus
+
+Buttons inside memo must function.
+
+⸻
+
+5️⃣ Anti-Redundancy Refinement Pass
+
+Audit overlap between:
+	•	Drift alerts
+	•	Forecast
+	•	Cognitive load
+	•	Capacity warnings
+	•	Strategic trajectory
+	•	Advisory panel
+
+Consolidate logic so:
+	•	Coach = intelligence surface
+	•	Review = governance layer
+	•	My Day = execution
+
+Remove duplicate insights shown in multiple places.
+Keep power. Remove clutter.
+
+Provide Anti-Redundancy Report.
+
+⸻
+
+6️⃣ System Coherence Requirements
+
+Ensure:
+	•	Identity drives intent.
+	•	Intent influences advisory.
+	•	Season influences thresholds.
+	•	Drift feeds advisory.
+	•	Friction feeds redesign.
+	•	Forecast influences mitigation.
+	•	Review updates coach.
+	•	Coach actions update review.
+	•	Nothing is isolated.
+
+⸻
+
+7️⃣ QA PASS (Do not stop until clean)
+
+Verify:
+	•	No dead buttons
+	•	No console errors
+	•	All Apply actions work
+	•	No duplicated close controls
+	•	Scroll safe on iPhone
+	•	Persistence intact
+	•	No regressions in:
+	•	Tasks
+	•	Habits
+	•	Goals
+	•	Review
+	•	Drift
+	•	Forecast
+	•	Memo
+	•	Notifications
+
+Deliver:
+	1.	What was implemented
+	2.	What was refined
+	3.	Anti-redundancy report
+	4.	Where to test checklist
+	5.	Confirmation: no regressions

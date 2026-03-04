@@ -1,0 +1,88 @@
+Perform a Release Candidate QA + tuning pass. Do not add new features unless required to fix a bug or close a logic gap. Do not break existing flows. Goal is “ship today” stability: no dead buttons, no noisy alerts, consistent analytics, clean UI.
+
+1) Full regression audit (must pass)
+
+Manually verify end-to-end on iPhone layout:
+	•	My Day (Morning / Midday / Close the Loop)
+	•	Tasks (Today / Upcoming / Overdue / Completed + search + labels)
+	•	Habits Hub (linking + minimum version + gravity tags)
+	•	Goals (domain grouping + progress auto/manual + next action)
+	•	Review (weekly vibe check + Sunday Reset + intelligence accept actions)
+	•	Coach & Insights (identity, season, forecast, drift, friction patterns, proof highlights, next steps)
+	•	Identity page (editability, proof timeline, drift button)
+
+Fix anything broken, incomplete, or non-functional.
+
+2) Console + state audit (must be clean)
+	•	No console errors on load, navigation, or actions
+	•	Hydration/migrations safe
+	•	No duplicate schedulers or duplicate UI close controls
+	•	No double-scroll or clipped modals
+
+3) Drift thresholds tuning (reduce noise; increase signal)
+
+Tune drift engine thresholds to be meaningful and calm:
+
+Defaults:
+	•	Habit drift: missed ≥3 in 7 days AND no adaptation (no minimum version/reschedule/pause)
+	•	Domain drift: emphasized domain (weight ≥2) has near-zero aligned actions for 7 days (skip flagging if Season=Recover and domain is deprioritized)
+	•	Overdue drift: overdue count >3 AND week-over-week increase
+	•	Reflection drift: close-the-loop <2/week AND weekly vibe check skipped
+	•	Overload drift: “Behind/Overloaded” logged ≥3/week AND no triage action applied
+
+Rules:
+	•	Max 3 drift alerts displayed at once
+	•	Add snooze option (7 days)
+	•	Drift must recommend only actionable fixes with working buttons
+
+Verify drift alerts appear in Identity + Coach and actions apply real changes.
+
+4) Forecast tuning (Adaptive Capacity Forecasting)
+
+Tune forecast thresholds so it’s predictive but not alarmist:
+
+Signals:
+	•	rising overdue trend
+	•	energy/stress trend from vibe check + daily logs
+	•	friction frequency last 7 days
+	•	drift severity
+	•	season mode
+
+Outputs:
+	•	Stable / Watch / Overload Risk / Recovery Needed
+
+Rules:
+	•	Only change forecast state if signals persist 2+ days (avoid flapping)
+	•	Provide 2–3 actions; all must work (reduce scope, focus mode, minimum version, schedule reset)
+
+5) Friction Mapping prompt frequency (avoid fatigue)
+	•	Prompt for friction at most 1x/day by default
+	•	Always optional
+	•	Allow user setting: Off / Light / Normal
+	•	Ensure friction events feed coach insights and suggestions
+
+6) Proof Timeline validation
+
+Ensure proof events:
+	•	are created for keystone completions, resets, close-the-loop, wise adaptations
+	•	render correctly in Identity page timeline
+	•	are tappable and route to relevant items
+
+7) Notifications/reminders validation
+	•	Reminder Center shows all completed reminders under “Earlier today” with correct names
+	•	Resets daily via dateKey filtering
+	•	Toggles produce scheduled reminder events
+	•	No duplicate X icons
+	•	Test reminder fires and logs correctly
+
+8) Ship-ready polish checklist
+	•	Touch targets ≥44px
+	•	Safe area padding correct
+	•	No smashed buttons (esp. quarter picker)
+	•	Tooltips open/close cleanly
+	•	Microcopy consistent with warm strategic coach voice
+
+At the end, output:
+	1.	Bugs found + fixed (bullet list)
+	2.	Final tuned threshold values (drift + forecast + friction)
+	3.	“Where to test” checklist for me

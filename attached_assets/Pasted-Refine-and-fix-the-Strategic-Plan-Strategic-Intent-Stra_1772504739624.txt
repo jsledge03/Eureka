@@ -1,0 +1,173 @@
+Refine and fix the Strategic Plan / Strategic Intent / Strategic Trajectory system so it is clear, thesis-aligned, and fully functional, with clean UX and strong Coach ↔ Review integration. Do not gut features; refine for effectiveness, coherence, and performance. Do a redundancy/bloat sweep and consolidate only when it improves clarity without watering down the app.
+
+⸻
+
+1) Clarify “Strategic Intent” (definition + correct content)
+
+1A) Define Strategic Intent (in-app copy + tooltip)
+
+Strategic Intent should answer:
+	•	“What am I optimizing for right now?”
+	•	“What am I protecting?”
+	•	“What tradeoffs am I willing to make this season/quarter?”
+
+It should be a short, human-readable statement that guides decisions and prioritization.
+
+Add a ⓘ tooltip explaining:
+	•	Strategic Intent is not metrics or settings.
+	•	It’s a leadership stance: outcomes + constraints + values.
+
+1B) Remove unrelated items from Strategic Intent UI
+
+Strategic Intent should NOT show:
+	•	Grace Bank
+	•	Daily Rhythm
+	•	Set Theme
+
+Those can exist elsewhere, but remove them from the Strategic Intent section so it stays conceptually clean.
+
+If any of those are currently embedded there, relocate them:
+	•	Grace Bank → Coach & Insights (Accountability tools)
+	•	Daily Rhythm → My Day / Coach
+	•	Theme → Quarter plan header or Strategic Trajectory (if appropriate)
+
+⸻
+
+2) Clarify “Strategic Trajectory” (definition + best use)
+
+2A) Define Strategic Trajectory (in-app copy + tooltip)
+
+Strategic Trajectory should answer:
+	•	“Where is my system heading if I keep operating this way?”
+	•	“What’s my next evolution in identity, domains, and goals?”
+	•	“What is the next 2–6 week directional move?”
+
+It is trend + direction, not a plan.
+It should synthesize:
+	•	momentum/rhythm trends
+	•	domain drift vs emphasis
+	•	friction patterns
+	•	forecast outlook
+	•	recent proof (identity evidence)
+
+Add a ⓘ tooltip:
+	•	Strategic Trajectory is a directional readout + recommended recalibration.
+	•	It helps you steer the operating system.
+
+2B) Enhance the field: make it meaningful and actionable
+
+Strategic Trajectory should show:
+	1.	Direction summary (1–2 sentences)
+	2.	“Tailwinds” (what’s working)
+	3.	“Headwinds” (what’s costing you)
+	4.	“3 recommended course corrections” with buttons that DO things:
+	•	reduce scope / pause habit
+	•	schedule reset
+	•	shift to Minimum Version defaults
+	•	adjust constraints / not-to-do
+	•	prioritize a keystone habit
+
+All actions must route correctly and persist.
+
+⸻
+
+3) Coaching field improvements (Strategic Plan in Coach)
+
+3A) Coach ↔ Strategic Plan integration
+
+In Coach & Insights:
+	•	Add a “Strategic Plan” card with:
+	•	Strategic Intent (editable)
+	•	Strategic Trajectory (auto-generated + editable notes)
+	•	“Read Weekly Memo” entry point
+
+Coach should reference the Strategic Intent in recommendations:
+	•	“To support your intent of ___, the smallest win today is ___.”
+
+3B) Ensure everything works
+	•	Editing Strategic Intent saves and persists.
+	•	Trajectory updates when new weekly check-in, memo, drift, forecast, friction data updates.
+	•	No dead actions.
+
+⸻
+
+4) Weekly Executive Memo UX: fix “Read full memo” behavior
+
+Problem: “Read full memo” currently routes to Sunday Reset page, which is confusing and doesn’t show the memo clearly.
+
+Fix as follows:
+
+Option (preferred): Full Memo bottom sheet
+
+When user taps “Read full memo”:
+	•	Open a dedicated bottom sheet (swipe-down dismiss) showing the full memo:
+	•	Title: “Weekly Executive Memo”
+	•	Date range (week of)
+	•	Sections:
+	•	What you protected
+	•	What drifted + why
+	•	Patterns (friction/energy/timing)
+	•	Recommendations (with action buttons)
+	•	Include a single close control (Done or X, not both).
+	•	Sheet must be scrollable and safe-area padded.
+
+Navigation fallback:
+
+If you must route instead of sheet:
+	•	Create a dedicated “Weekly Memo” page with back navigation.
+	•	Do not dump user into Sunday Reset.
+
+Ensure recommendation buttons inside memo work and route/apply changes.
+
+⸻
+
+5) Coach ↔ Review sweep: coherence + valuable insights
+
+Audit the relationship between:
+	•	Review (Sunday Reset, Weekly check-in, intelligence suggestions)
+	•	Coach (next steps, forecast, drift, friction, gravity, proof)
+
+Fix any loose ends:
+	•	Review actions must refresh Coach insights.
+	•	Coach actions must reflect in Review.
+	•	Intelligence “Accept” must always apply or route with clear instruction.
+	•	No duplicated conflicting recommendations.
+
+Add light “system explanation” microcopy where needed so user knows why they are seeing something.
+
+⸻
+
+6) Redundancy and bloat sweep (refine, don’t gut)
+
+Perform a careful redundancy audit:
+	•	Identify features or sections that overlap in purpose.
+	•	Consolidate only if it increases clarity and reduces confusion.
+
+Rules:
+	•	Do NOT delete features haphazardly.
+	•	Prefer merging surfaces (e.g., show Grace in Coach not Strategic Intent) rather than removing functionality.
+	•	Keep the OS powerful, not watered down.
+
+Deliver an “anti-bloat refinement report”:
+	•	what was confusing/redundant
+	•	what was refined/relocated/merged
+	•	why it improves clarity
+	•	what remains intentionally distinct and why
+
+⸻
+
+7) QA + regression checklist (must pass before stopping)
+	•	Strategic Intent section no longer shows Grace Bank/Daily Rhythm/Theme.
+	•	Strategic Intent editable, persists, used by Coach recommendations.
+	•	Strategic Trajectory shows meaningful content + working actions.
+	•	“Read full memo” opens readable memo sheet/page and is dismissible.
+	•	Memo recommendations buttons work.
+	•	Sunday Reset still works independently.
+	•	No console errors.
+	•	iPhone scrolling + safe areas OK.
+	•	No dead buttons.
+
+At the end, provide:
+	1.	What was changed and why (strategic plan clarifications)
+	2.	Where to test
+	3.	Anti-bloat refinement report

@@ -1,0 +1,142 @@
+Upgrade Coach & Insights into the primary self-leadership engine by integrating the strategic plan and building Grace 2.0 (compassionate accountability). Ensure all recommended actions are clickable and change state in the app.
+
+A) Integrate Strategic Plan into Coach (make it one system)
+
+Coach & Insights should include a section at top:
+
+“This Quarter’s North Star” (theme + top outcomes)
+
+“This Week’s Focus” (domains + top 3 outcomes from Sunday Reset)
+
+Coach should be able to edit these:
+
+“Edit Quarter Plan” button opens the Review quarter editor
+
+“Run Sunday Reset” button launches Sunday Reset wizard
+
+B) Coach recommendations must be dynamic + actionable (no dead buttons)
+
+Generate 3–5 Next Steps based on real signals:
+Signals:
+
+missed habits (streak/rhythm dips)
+
+overdue tasks
+
+domain imbalance
+
+energy mode (Push/Sustain/Recover)
+
+constraint violations (too many tasks/goals)
+
+grace usage patterns
+
+Each recommendation includes:
+
+title
+
+1-sentence rationale (“because…”)
+
+action buttons that DO something:
+
+open a habit edit sheet
+
+create/schedule a task
+
+apply grace
+
+shift to Minimum Version
+
+reduce weekly scope (archive or pause items)
+
+If context missing, route to the correct place and show an explanation.
+
+C) Grace 2.0: compassionate accountability (not a loophole)
+
+Grace must:
+
+help you recover without shame
+
+but still hold you accountable structurally
+
+Implement:
+
+Grace Bank per week (configurable)
+
+Ex: 2 grace credits/week
+
+Used grace prevents a rhythm penalty
+
+Grace requires a “recommit”
+When applying grace, prompt:
+
+“What’s the smallest recommitment you can make?”
+Options:
+
+Do Minimum Version now
+
+Reschedule for tomorrow
+
+Swap with a lighter task
+This turns grace into action, not avoidance.
+
+Grace patterns become insights
+Coach shows:
+
+“Grace used most often on Tue evenings → consider lighter scheduling or Minimum Version”
+
+If grace frequently used on same habit → recommend redesign (cue/friction).
+
+Grace for tasks too
+Allow “Grace this task”:
+
+Doesn’t delete it
+
+Moves it to a “Recovery lane” with a suggested re-plan option
+
+Avoids overwhelming backlog
+
+D) Review → Coach feedback loop (make it adaptive)
+
+After Weekly Check-in or Sunday Reset:
+
+Coach automatically refreshes:
+
+domain focus
+
+next steps
+
+constraint suggestions
+
+task generation suggestions
+
+E) Next Level features (add after above is stable)
+
+Add a “Systems Upgrades” section in Coach with optional toggles:
+
+“Keystone Habit Mode” (only 1–3 keystone habits show on Today)
+
+“Energy-based scheduling” (suggest tasks based on energy rating)
+
+“Friction Audit” (weekly prompt: what made this hard?)
+
+“Identity Alignment Score” (optional, low pressure)
+
+“Decision Tradeoff prompt” (for overload: what do we drop?)
+Keep them optional, not overwhelming.
+
+QA checklist:
+
+Coach edits strategic plan
+
+Coach launches Sunday Reset
+
+Grace apply triggers recommit action
+
+Recommendations buttons always work
+
+Coach updates after Review actions
+
+Persistence reload passes
+
+Deliver with a “Where to test” list.

@@ -1,0 +1,204 @@
+Make a comprehensive but regression-safe improvement pass. Goal: market-ready polish, sound scoring logic, integrated closed-loop analytics, and fix broken/non-functional actions. Do not break existing working flows (Sunday Reset, goal progress auto, delete). Prefer additive changes and minimal refactors.
+
+1) Bring back + enhance Identity page (foundational)
+
+Reintroduce Identity as a first-class tab/page with the existing functionality preserved, but smarter and aligned with theses.
+Must support:
+
+“Who I am becoming” and “Who I want to be” (two sections)
+
+Values/Ethics/Character traits (chips editable)
+
+Link identity to domains and goals (optional)
+
+Make Coach use Identity language in insights (“This aligns with becoming X…”)
+Keep it warm and reflective.
+
+2) Enhance Goals tab (make it impactful + thesis-aligned)
+
+Upgrade Goals tab to:
+
+Show goals grouped by domain (Physical, Emotional, Mental, Social, Spiritual, Career, Financial)
+
+Each goal card shows:
+
+linked habits count
+
+linked tasks count
+
+progress bar (auto with manual override toggle already supported)
+
+“Next best action” (one tap creates/schedules a relevant task or opens Habits Hub for that goal)
+
+Add a “Goal-Intention” field prominently and display it.
+
+Ensure edits are easy (tap row → sheet → edit/delete).
+
+3) Rename Compass tab to “My Day”
+
+Change nav label and route title from “Compass” to “My Day”
+
+Ensure links still work
+
+4) Weekly Vibe Check: bring back and integrate meaningfully
+
+Restore the weekly vibe check UI/feel you had before, but integrate it into the system:
+
+Place it in Review AND optionally show a small prompt in Coach if not completed that week.
+
+Fields:
+
+energy trend (1–5)
+
+stress (1–5)
+
+confidence (1–5)
+
+“what worked”, “what slipped”, “one change”
+
+choose up to 3 focus domains for next week (max 3)
+
+After submit, it must update:
+
+Coach recommendations
+
+constraints/not-to-do suggestions
+
+Sunday Reset suggestion defaults (focus domains, outcomes)
+
+5) Expand Review domain selection max 2 → max 3 (everywhere)
+
+In any review/reset flows where focus domains are selected:
+
+allow up to 3, block 4th with friendly message.
+
+6) Scoring audit + fix: Daily Rhythm, Identity Alignment, Rhythm
+
+Document clearly in UI (“How this is calculated”) and ensure calculations are logically sound.
+
+A) Daily Rhythm creation
+
+Ensure daily check-ins (morning/midday/evening) write to a DailyLog keyed by local date YYYY-MM-DD.
+
+Logs must feed analytics and coach.
+
+B) Identity Alignment Score (0–100)
+Implement rubric:
+
+Intentionality 30% (set outcomes + focus domains + keystone action)
+
+Congruent Action 40% (% completed items linked to goals/domains/identity values)
+
+Integrity under constraints 20% (low energy day handled with Minimum Version or reduced scope)
+
+Reflection 10% (closed loop)
+Make it non-shaming and resilient to low-volume days.
+
+C) Rhythm Score (0–100)
+Rolling window 14d default:
+
+70% habits consistency (scheduled vs completed, grace neutral)
+
+30% task reliability (due vs completed)
+No streak resets. Use local date keys. Provide “Why” tooltip.
+
+7) Tasks: top-right pin label dropdown must match revised labels (include Coach)
+
+Ensure the top-right label dropdown shows exactly:
+Deep Work, Recovery, Reflection, Fitness, Nutrition, Social, Spiritual, Career, Finance, Personal, Coach, Household
+Preserve any existing custom labels too.
+
+8) Midday Recalibrate triage: fix “defer to low energy items” action
+
+Currently clicking “defer to low nrg items” does nothing. Implement intended outcome:
+
+When selected, the system should:
+
+Identify today’s tasks with high effort/priority (or tagged Deep Work) and move them to tomorrow (or Upcoming) OR to Recovery lane (if you have it)
+
+Suggest minimum-version swaps for habits today
+
+Create (or surface) 1–2 low-energy tasks (Recovery/Household/Reflection) if user has none
+
+Must visibly change Today/Tasks after action.
+
+Persist changes after reload.
+
+9) My Day “Close the Loop” scroll bug (iPhone)
+
+Fix so user can scroll and select all options and complete Close the Loop:
+
+Ensure the bottom sheet/modal is scrollable within viewport
+
+Add safe area padding
+
+Keep Save/Done accessible
+QA on iPhone: user can reach all fields and submit successfully.
+
+10) Closed-loop integration: check-ins and reflections must feed coaching + insights
+
+Ensure Morning/Midday/Evening + Weekly Vibe Check all affect:
+
+Coach recommendations priority
+
+Domain balance
+
+Constraint/not-to-do suggestion logic
+
+Rhythm and Identity Alignment computations
+
+Insight generation (e.g., “Low energy correlates with missed Fitness habits”)
+No more “dead data.”
+
+11) Review tab Intelligence layer “Accept” must actually apply changes
+
+Right now Accept seems to do nothing. Fix:
+
+When user accepts a suggestion (constraint/not-to-do):
+
+It must be added to the active quarter plan immediately
+
+If suggestion has an action (e.g., “cap tasks/day”), apply setting or open the relevant configuration screen
+
+Provide confirmation toast: “Applied”
+
+If it’s guidance-only, then route user to the place where they can apply it with clear instruction (“Go to Habits Hub to change schedule”).
+No dead buttons.
+
+12) Coach stability + brokenness audit (release blocker)
+
+Heavily scrutinize Coach:
+
+No console errors
+
+All buttons work (next steps route and act)
+
+Empty state graceful
+
+Uses updated scoring and logs
+
+Reflects identity language and weekly vibe check
+
+13) Regression QA (must pass)
+
+Today filter accurate (local date)
+
+Coach loads after reload and actions work
+
+Sunday Reset still completes and generates tasks/habit changes
+
+Goal progress auto + manual both work
+
+Close the loop completes on iPhone
+
+Review Accept actually applies changes
+
+No console errors
+
+At end, provide:
+
+“What was fixed”
+
+“How scoring works” summary displayed in UI tooltips
+
+“Where to test” checklist

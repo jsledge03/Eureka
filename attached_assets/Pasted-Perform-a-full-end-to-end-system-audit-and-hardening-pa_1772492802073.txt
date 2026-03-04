@@ -1,0 +1,77 @@
+Perform a full end-to-end system audit and hardening pass on this app as if it is shipping to market today. Treat this as a Release Candidate “stop-the-line” quality sprint. Do not stop until the app is fully combed through, all broken/incomplete/unsound logic is fixed, and all features are reliable on iPhone 15.
+
+1) Audit scope (must cover everything)
+
+Audit and verify the following areas end-to-end:
+	•	My Day (Morning setup, Midday recalibrate, Close the Loop)
+	•	Tasks (Today/Upcoming/Overdue/Completed, labels, edit/delete, search, date logic)
+	•	Habits Hub (CRUD, linking to goals, minimum version, schedule logic, friction capture)
+	•	Goals (CRUD, domain grouping, progress auto + manual, next best action)
+	•	Review (quarter picker/history, weekly vibe check, Sunday Reset completion, intelligence suggestions + Accept behavior)
+	•	Coach & Insights (identity-first dashboard, next steps actions, drift/forecast/friction/keystone/proof integration)
+	•	Identity (editability, values/commitments, proof timeline, drift sheet)
+	•	Notifications/Reminders (toggles, scheduling, history log, “Earlier today” reset)
+	•	Tooltips and explanations (rubrics are accurate, match actual calculations, and open/close reliably)
+
+2) No dead code, no dead UX, no fake buttons
+	•	Identify and remove or fix dead code paths, unused handlers, or placeholder logic.
+	•	Ensure every button, toggle, accept action, and call-to-action actually does something and results in a visible state change.
+	•	If something cannot be supported (e.g., push notifications without a sender), implement a functional fallback and label it clearly without breaking UX.
+
+3) Logic correctness + thesis alignment audit
+
+Validate that the system behaves according to the app’s thesis:
+
+Identity → Goal-Intention → Habit → Task → Reflection → Adaptation
+
+Specifically verify:
+	•	Identity is user-authored and never silently rewritten.
+	•	Evidence, drift, forecasting, and coaching are derived from real behavior logs.
+	•	Grace and Minimum Version support compassionate accountability (not loopholes).
+	•	Drift detection is non-shaming and action-oriented.
+	•	Daily Rhythm, Rhythm Score, Identity Alignment Score calculations are consistent, explainable, and match their tooltips.
+
+4) UI/UX audit (iPhone-native feel)
+	•	Fix spacing, safe areas, scroll issues, and smashed controls.
+	•	Ensure tap targets are ≥44px and sheets are scrollable and keyboard-safe.
+	•	Remove duplicate close controls (duplicate X’s).
+	•	Ensure the app feels like a native iOS utility app (calm, minimal, stable).
+
+5) Security and privacy hardening (local-first)
+
+Perform a lightweight but real security review:
+	•	Ensure no sensitive data is unintentionally logged (console logs, error traces).
+	•	Sanitize any user-generated content rendered to the UI (avoid XSS risks).
+	•	Validate input handling (no unsafe HTML injection).
+	•	Confirm data stays local by default (no external analytics).
+	•	Ensure service worker / notifications code is safe and does not throw errors when unsupported.
+	•	Review dependencies for obvious issues and remove unnecessary ones.
+
+6) Stability + regression testing (must pass)
+
+Run a structured regression checklist and fix any failures:
+	•	No console errors on load or navigation
+	•	Reload persistence works (no “date drift”)
+	•	Today/Overdue logic correct with local date keys
+	•	Delete/edit works from derived/filtered lists
+	•	Coach loads and all “Next Steps” actions work
+	•	Sunday Reset completes and applies changes
+	•	Accept suggestion applies change or routes user correctly
+	•	Notifications log events and “Earlier today” resets daily
+
+7) Improvements allowed — but only if they don’t create regressions
+
+If you identify upgrades that materially improve clarity, stability, or thesis alignment:
+	•	implement them carefully
+	•	verify they are integrated across the system
+	•	re-run regression tests
+
+8) Deliverables at the end
+
+Provide:
+	1.	A concise list of issues found and fixed
+	2.	Any security hardening actions taken
+	3.	A “Where to test” checklist (step-by-step)
+	4.	Confirmation that no major regressions were introduced
+
+Do not stop until all tests pass and the app is stable, coherent, and ship-ready.

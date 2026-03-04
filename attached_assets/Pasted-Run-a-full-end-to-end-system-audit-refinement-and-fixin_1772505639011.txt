@@ -1,0 +1,82 @@
+Run a full end-to-end system audit, refinement, and fixing pass as if this app is shipping today. This is a Release Candidate “stop-the-line” sprint: tie every loose end, remove regressions, fix broken/unfinished logic, and ensure every feature is complete and reliable on iPhone 15. Do not stop until everything is fully combed through and fixed. Do not introduce new problems or break working functionality.
+
+1) Audit scope (must cover every area)
+
+Audit and verify end-to-end:
+	•	My Day (Morning, Midday Recalibrate, Close the Loop; scroll + keyboard safe)
+	•	Tasks (Today/Upcoming/Overdue/Completed; CRUD; labels; date logic; search; filters; persistence)
+	•	Habits Hub (CRUD; linking to goals; minimum version; schedule logic; keystone gravity; friction capture)
+	•	Goals (CRUD; domain grouping; progress auto + manual; next best action; linking)
+	•	Review (quarter selector/history; weekly vibe check; Sunday Reset; intelligence suggestions + Accept behavior)
+	•	Coach & Insights (identity-first dashboard; season; forecast; drift; friction; proof; next steps actions)
+	•	Identity (fully editable; values/commitments; evidence + proof timeline; drift sheet)
+	•	Notifications/Reminders (toggles; scheduling; reminder event log; “Earlier today” correctness + daily reset)
+	•	Tooltips (rubrics match actual calculations; open/close reliably)
+
+For each surface: create a checklist of expected behaviors, test them, and fix any failures.
+
+2) No dead code, no dead buttons, no fake UX
+	•	Identify and remove or fix dead code paths, placeholder logic, unused state, duplicated schedulers, and redundant handlers.
+	•	Ensure every button/toggle/action (especially Coach Next Steps and Review Accept) causes a real state change and confirms completion (toast/banner).
+	•	If something cannot be supported fully (e.g., push without a sender), implement a functional fallback and label it clearly without breaking UX.
+
+3) Logic correctness and thesis alignment
+
+Validate that the app behavior matches the thesis:
+
+Identity → Goal-Intention → Habit → Task → Reflection → Adaptation
+
+Confirm:
+	•	Identity is user-authored and never silently rewritten.
+	•	Daily Rhythm / Rhythm Score / Identity Alignment Score calculations are correct, consistent, and match tooltips.
+	•	Drift, forecast, friction mapping, keystone gravity, proof timeline are derived from real logged behavior.
+	•	Grace and Minimum Version are compassionate accountability (no loopholes, no shame).
+
+Fix any mismatch between what the UI claims and what the code does.
+
+4) Data integrity + persistence hardening
+	•	Ensure a single source of truth for goals/habits/tasks and derived views never mutate incorrectly.
+	•	Enforce referential integrity (no orphaned links).
+	•	Add schema versioning/migrations as needed so older stored data won’t break new code.
+	•	Confirm reload persistence across the whole app and no “date drift.”
+
+5) Date/time correctness (release blocker)
+	•	Ensure device-local dateKey is used consistently across Today/Overdue/Reminders/Logs.
+	•	Validate tasks due “today” appear in Today and overdue appear in Overdue.
+	•	Validate reminders “Earlier today” shows all completed reminders for today and resets daily via dateKey filtering.
+
+6) UX/iPhone-native polish (without redesigning)
+	•	Fix safe-area padding, clipped content, double scroll, smashed controls, keyboard overlap.
+	•	Touch targets ≥44px; sheets scroll and close correctly.
+	•	Remove duplicate close controls (duplicate X).
+	•	Ensure consistent modal/sheet patterns across the app.
+
+7) Security and privacy hygiene (local-first)
+	•	Remove sensitive console logs and debug output.
+	•	Sanitize user-generated content rendered in UI (avoid XSS/HTML injection).
+	•	Ensure no unintended network calls or external tracking.
+	•	Ensure service worker/notification code fails gracefully if unsupported.
+
+8) Regression test pass (must pass before stopping)
+
+Run a structured regression checklist and fix failures:
+	•	Create/edit/delete tasks (including from Today/Overdue filtered lists)
+	•	Create/edit/delete habits + link to goals
+	•	Create/edit goals + progress auto/manual
+	•	Sunday Reset completes and applies changes
+	•	Weekly vibe check saves and influences coach/insights
+	•	Coach loads on refresh and all actions work
+	•	Review intelligence Accept applies or routes correctly
+	•	Close the loop completes on iPhone
+	•	Reminders log shows correct names and resets daily
+	•	No console errors
+
+9) Deliverables
+
+When done, output:
+	1.	A concise list of issues found and fixed (by feature area)
+	2.	Any data migrations/hardening added
+	3.	A “Where to test” checklist for validation on iPhone
+	4.	Confirmation: no major regressions introduced
+
+Do not stop until all checks pass and the app is stable, coherent, and ship-ready.

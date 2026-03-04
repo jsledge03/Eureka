@@ -1,0 +1,187 @@
+Do a release-candidate hardening pass focused on: Notifications reliability + UX polish + Drift alerts functionality + threshold tuning. Do not break existing working flows (Today/Overdue, Sunday Reset, goal progress, delete). Favor incremental fixes + audits over rewrites. Confirm no console errors.
+
+⸻
+
+A) NOTIFICATIONS: Fix “toggled but not receiving” + improve UX
+
+A1) Fix notification UX defects
+	•	Remove duplicate close icons (duplicate X’s). Ensure each sheet/dialog has exactly ONE close control:
+	•	Either a top-right X OR a “Done” button, not both.
+	•	Ensure close behaviors are consistent:
+	•	Tap outside closes (if appropriate)
+	•	Escape (desktop) optional
+	•	Always prevents scroll lock issues on iPhone
+
+A2) Audit notification architecture (why toggles don’t fire)
+
+Run a code audit to find why enabled toggles aren’t producing reminders/pushes:
+	•	Verify toggles are persisted correctly (localStorage/IndexedDB)
+	•	Verify a single notification scheduler reads that persisted config on:
+	•	app start
+	•	app resume / visibilitychange
+	•	after toggles change
+	•	Ensure there is no duplicated scheduler causing conflicting state
+
+A3) Implement “Notification Center” that proves the system is working
+
+In Coach & Insights > Notifications:
+	•	Show next scheduled reminders (with timestamps)
+	•	Show last-fired reminders (history log)
+	•	Show “Missed reminders” (if app was closed)
+	•	Add “Send Test Notification”:
+	•	Tier 1: in-app banner always
+	•	Tier 2: push if enabled and supported
+This makes reliability visible and debuggable.
+
+A4) Ensure everything you toggled ON actually results in triggers
+
+For each toggle (My Day start / Midday / Close loop / Overdue summary / Sunday Reset / Progress update):
+	•	Create a scheduled reminder entry
+	•	If app is open: show in-app banner
+	•	If app is closed: on next open show “Missed reminder” banner + log it
+
+A5) iPhone PWA push reality (do not break if unsupported)
+
+Push must be implemented defensively:
+	•	Only show “Enable Push” if:
+	•	running in standalone (installed)
+	•	Notifications + service worker + PushManager available
+	•	If push is not available, show: “Push not available here — in-app reminders will still work.”
+No errors, no dead UI.
+
+A6) Add haptics for notification interactions
+
+When user:
+	•	enables a toggle
+	•	taps test notification
+	•	taps “Apply” / “Done”
+Trigger subtle haptic feedback via:
+	•	navigator.vibrate(10) fallback (works in some contexts)
+	•	If you already have a haptics helper, use it
+Keep it subtle and non-annoying.
+
+QA:
+	•	Toggle on all reminders
+	•	Verify Notification Center shows next scheduled items
+	•	Simulate time passing by adjusting device clock OR by creating a “Fire in 10 seconds” test reminder
+	•	Verify banners and history logs work
+	•	No duplicate X icons
+
+⸻
+
+B) “FEELS LIKE AN APP” UX POLISH (iPhone-first)
+
+B1) Sheets and modals
+	•	Standardize bottom sheets:
+	•	single close control
+	•	safe-area padding
+	•	scrollable content
+	•	sticky action row if needed (Save/Done)
+	•	Fix any sheet that cannot scroll fully on iPhone
+
+B2) Touch + haptics
+
+Add subtle haptic feedback to:
+	•	completing a task
+	•	completing a habit
+	•	applying grace
+	•	accepting a suggestion
+	•	successful Sunday Reset completion
+
+Haptics must never throw errors if unsupported.
+
+B3) Visual polish (no gamification overload)
+	•	Ensure spacing and safe areas match iPhone 15 feel
+	•	Remove any cramped stacks, especially in quarter selector, notification sheets, and coach cards
+	•	Ensure tap targets >= 44px
+
+Run a quick UI scan for misalignment, clipped content, double scroll, overlap.
+
+⸻
+
+C) DRIFT ALERTS: Fix brokenness and make them visible
+
+C1) Make Drift alerts actually compute and display
+
+Currently drift alerts aren’t working. Investigate and fix:
+	•	Ensure drift engine runs after store hydration and whenever logs/tasks/habits update
+	•	Ensure drift results are stored in state and shown in:
+	•	Coach & Insights (“Drift Alerts” section)
+	•	Identity page (“View Drift”)
+
+Add a visible debug line in dev mode (or internal console) showing:
+	•	last drift computation time
+	•	number of alerts
+
+Ensure empty state is handled gracefully (no crashes).
+
+C2) Drift alerts must have working actions
+
+Every drift alert card must include at least one action button that does something:
+	•	open relevant habit editor
+	•	schedule a task
+	•	apply grace / convert to Minimum Version
+	•	adjust a constraint
+All actions must route and persist changes.
+
+QA:
+	•	Create a scenario to trigger drift (e.g., miss a habit 3 times)
+	•	Confirm drift alert appears
+	•	Tap action -> state changes and alert updates accordingly
+
+⸻
+
+D) TUNE DRIFT THRESHOLDS (make it smart, not noisy)
+
+Tune thresholds so drift is meaningful but not spammy, using these defaults:
+
+D1) Overall drift severity
+	•	LOW: 1–2 mild signals
+	•	MEDIUM: 3+ mild signals OR 1 strong signal
+	•	HIGH: 2+ strong signals OR overdue spiral + habit misses + low reflection
+
+D2) Specific tuned thresholds
+	1.	Habit commitment drift:
+
+	•	Flag only if a habit is missed >= 3 times in 7 days AND user has NOT adapted (no Minimum Version used, no reschedule, no pause)
+
+	2.	Domain drift:
+
+	•	Flag only if:
+	•	domain emphasis weight >= 2 AND
+	•	7 days with near-zero aligned actions in that domain
+(avoid flagging if user is in Recover mode and explicitly deprioritized domain)
+
+	3.	Reflection drift:
+
+	•	Flag if Close-the-loop < 2 days/week AND weekly vibe check skipped
+
+	4.	Overdue drift:
+
+	•	Flag if overdue count increased week-over-week AND > 3 overdue tasks
+
+	5.	Overload drift:
+
+	•	Flag if user logged “Overloaded/Behind” >= 3 times in a week and did not triage
+
+D3) Reduce alert noise
+	•	Show max 3 drift alerts at once (highest impact)
+	•	Add “Snooze drift alerts for 7 days” option
+	•	Drift language must be calm and actionable
+
+⸻
+
+E) Final audits + QA (must pass)
+	•	No console errors
+	•	Notifications toggles actually produce scheduled reminders and history
+	•	Duplicate X icons removed
+	•	Haptics do not crash and feel subtle
+	•	Drift alerts compute, display, and actions work
+	•	Drift thresholds feel sane (not spammy)
+	•	Persistence reload passes
+	•	No regressions to Today/Overdue, Sunday Reset, Coach actions
+
+Deliver:
+	1.	What was broken and how fixed (notifications + drift)
+	2.	Where to test (step-by-step)
+	3.	Confirmation of threshold values implemented

@@ -1,0 +1,164 @@
+Fix Life Compass so it is fully functional on iPhone-only. Do not stop until all listed actions work end-to-end AND persist after reload. Priority is fixing broken interactions and wiring up real navigation/actions.
+
+1) TASKS: DELETE MUST WORK (everywhere)
+
+Tasks delete is currently broken. Fix it properly.
+Requirements:
+
+Every task row has a visible Delete (trash) action.
+
+Clicking Delete removes it from the source of truth store, not only from a filtered/derived array.
+
+Must work in Inbox / Today / Upcoming / Completed and any filtered view.
+
+Deleted tasks must not reappear after reload.
+
+Add confirm dialog + optional Undo toast.
+
+QA steps you must run:
+
+Create 3 tasks with different due dates.
+
+Delete one from Today, one from Inbox, one from Upcoming.
+
+Reload the app.
+
+Verify all deleted tasks are still gone.
+
+2) QUARTER SELECTOR + QUARTER HISTORY (must be adjustable)
+
+User must be able to see and change the current quarter and view history.
+Implement in Review:
+
+Top pill selector: “YYYY · Q# ▾”
+
+Tap opens sheet with:
+
+Year picker
+
+Q1–Q4 buttons
+
+History list of saved quarters
+
+Actions: “Set current quarter”, “Clone this quarter”
+Persist:
+
+Store quarter plans keyed by year-quarter.
+
+Store currentQuarterKey and persist across reload.
+
+3) CONSTRAINTS + NOT-TO-DO: DEFINE + DERIVE INTELLIGENTLY
+
+Explain in UI how they’re derived, then implement derivation based on real signals:
+
+Inputs to derive suggestions:
+
+Capacity: count of active goals + habits + tasks
+
+Domain imbalance: neglected domains in last 14 days
+
+Friction notes + missed frequency
+
+Energy budget (Push / Sustain / Recover toggle)
+
+“Top outcomes” for the quarter (1–3)
+
+Outputs:
+
+Suggested Constraints (structured categories): time / energy / boundary / attention
+
+Suggested Not-to-do (structured): avoid / limit / defer
+Each suggestion shows:
+
+“Because…” rationale
+
+One-tap Accept (adds it)
+
+Editable after acceptance
+
+4) REPLACE PROJECTS → QUARTER GOAL PROGRESS BARS
+
+Remove “Projects.”
+Replace with “Quarter Goal Progress”:
+
+List all goals with progress bars.
+
+Progress calculation:
+
+Prefer goal’s own current vs target metric if provided
+
+Otherwise roll up from linked tasks (completed/total) and linked habit completion
+
+Allow user to edit goal progress (current/target) easily on iPhone.
+
+5) SUNDAY RESET PROTOCOL BUTTON MUST WORK
+
+“Start Reset Protocol” must open a real multi-step flow (wizard sheet), not a dead button.
+Flow (iPhone-friendly):
+
+Last week snapshot (rhythm, grace used, domain balance)
+
+Pick next week focus (1–2 domains + top 3 outcomes)
+
+Recalibrate habits (suggest switching slipping habits to “Minimum Version (Plan B)”)
+
+Generate weekly tasks (suggest tasks; user can accept/edit)
+Finish:
+
+Applies changes
+
+Takes user to Today/Tasks
+
+6) COACH OVERLAY → COACH & INSIGHTS TAB (and actions must work)
+
+Replace coach overlay with a bottom tab: “Coach & Insights”.
+This tab must show:
+
+Momentum + Rhythm
+
+Grace remaining/used
+
+Domain balance
+
+Quarter Goal Progress
+
+Patterns/Insights (based on user history)
+
+“Next Steps” (3–5) with buttons that DO something
+
+Every Next Step button must perform the intended action:
+
+“Simplify habit” → open Habit edit sheet for that habit and highlight Minimum Version
+
+“Schedule task” → open Quick Add with due date prefilled
+
+“Use grace day” → apply grace to a missed habit/day and update scoring instantly
+If context missing, route to the correct page and show a gentle message.
+
+7) iPHONE-ONLY UX REQUIREMENTS
+
+Large touch targets
+
+Keyboard safe: bottom nav hides when typing; inputs scroll into view
+
+Consistent pattern: tap row → detail sheet → Edit / Delete
+
+8) FINAL QA CHECKLIST (do not stop until passed)
+
+Create/edit/delete tasks works in every filtered list
+
+Quarter picker changes quarter and persists
+
+Quarter history loads, and clone works
+
+Constraints + not-to-do suggestions generate with rationale + accept works
+
+Goal progress bars reflect data + editable
+
+Start Reset Protocol button launches and completes flow
+
+Coach & Insights next-step buttons perform actions
+
+Reload test passes (persistence)
+
+After implementing, output a short “Where to test” checklist (1–2 lines per item).

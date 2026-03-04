@@ -1,0 +1,223 @@
+Perform a stability + correctness pass with a focus on: (1) date/today logic and Today filter accuracy, (2) Coach feature being broken (must be fully functional), (3) expand Review focus domains selection from max 2 → max 3, (4) add smart contextual habit→task suggestions during Sunday Reset (in addition to manual add). Do not break anything else; keep changes minimal and regression-safe. Add QA checks and confirm all fixes.
+
+A) FIX “TODAY” DATE LOGIC + CURRENT DAY DISPLAY (critical)
+
+Problem: Tasks due today are not appearing in Today; the app’s “current day” display is wrong. This indicates inconsistent date parsing/timezone/local-midnight logic.
+
+Implement a single source of truth for “today”:
+
+Use the device local timezone and compute startOfToday and endOfToday reliably.
+
+Normalize all task due dates to comparable values:
+
+If dueDate stored as YYYY-MM-DD, treat it as local date (not UTC midnight shifting).
+
+If dueDate stored as ISO datetime, compare using local time.
+
+Today filter rules:
+
+Task appears in Today if:
+
+not completed AND
+
+due date is within today’s local date window (startOfToday ≤ due < endOfToday) OR
+
+dueDate is exactly today’s YYYY-MM-DD.
+
+Update the “current day” display to use the same source of truth (e.g., “Sat, Feb 28” based on local date).
+
+QA:
+
+Create one task due today (date picker).
+
+Create one task due tomorrow.
+
+Ensure only today’s appears in Today.
+
+Reload app; still correct.
+
+Cross-check Overdue: tasks with due < startOfToday appear there, not in Today.
+
+B) UPDATE LABEL DROPDOWN OPTIONS (make them relevant)
+
+In Task creation/edit, the Label dropdown should include relevant default labels for this app. Replace generic/unhelpful options with a curated set:
+
+Suggested defaults:
+
+Deep Work
+
+Admin
+
+Health
+
+Fitness
+
+Nutrition
+
+Recovery
+
+Learning
+
+Relationships
+
+Spiritual
+
+Finance
+
+Career
+
+Errands
+
+Planning
+
+Reflection
+
+Household
+
+Requirements:
+
+Labels editable (add/remove)
+
+Works with filtering/search
+
+Persists after reload
+
+QA:
+
+Create task with label; filter by label works.
+
+C) COACH IS BROKEN — FULL AUDIT + REPAIR (no dead actions)
+
+This is release-blocking. Treat as a bug investigation + fix sprint.
+
+Add a “Coach Diagnostics” checklist internally:
+
+Ensure coach tab renders without errors
+
+Ensure metrics load after store hydration
+
+Ensure next-step actions are wired to real handlers
+
+Ensure no null/undefined references when data is empty
+
+Fix all Coach breakpoints:
+
+Any buttons that do nothing must be wired to a real action:
+
+open relevant page/sheet
+
+create a suggested task
+
+toggle Minimum Version
+
+apply grace
+
+If recommendation lacks context (no habit/task id), fallback must route to the correct area and explain.
+
+Make coach resilient with empty state:
+
+If user has no goals/habits/tasks, coach should show onboarding suggestions + “Load Starter Library” + “Create your first goal”.
+
+Add regression test steps at end:
+
+Coach loads after reload
+
+Coach actions work
+
+No console errors
+
+D) EXPAND REVIEW DOMAIN SELECTION 2 → 3
+
+In Sunday Reset / Weekly focus selection:
+
+Allow selecting up to 3 focus domains (instead of max 2).
+
+Update validation text and UI accordingly.
+
+QA:
+
+Select 3 domains: allowed
+
+Select 4th: blocked with friendly message
+
+E) ADD SMART HABIT → TASK SUGGESTIONS (Sunday Reset enhancement)
+
+You already support manual task creation in Sunday Reset. Add smart suggestions that are intuitive + contextual and can be accepted in one tap.
+
+Where:
+
+Sunday Reset step where you generate week tasks (or right after habit recalibration).
+
+How:
+
+For each selected focus domain and/or top outcomes:
+
+Suggest 3–7 tasks derived from:
+
+linked habits (keystone first)
+
+overdue tasks
+
+slipping habits (recommend Minimum Version tasks)
+
+quarter outcomes
+
+For each habit, generate a small “supporting task set”:
+Example:
+Habit: “Walk 8k steps”
+Suggestions:
+
+“Schedule 30-min walk (Tue 6pm)”
+
+“Prep shoes + headphones (Mon night)”
+
+“Pick walking route”
+These are optional; user can accept individually.
+
+UI requirements (iPhone-friendly):
+
+Show suggestions as cards with:
+
+title
+
+why (“supports your habit”)
+
+due date suggestion (optional)
+
+Accept button
+
+“Accept all” button
+
+All accepted tasks must land in Tasks/Today appropriately with due dates.
+
+QA:
+
+Run Sunday Reset selecting 3 domains
+
+See suggestions
+
+Accept one and verify it appears in Tasks
+
+Accept multiple and verify persistence after reload
+
+F) FINAL QA CHECKLIST (must pass before stopping)
+
+Today filter shows tasks due today correctly
+
+Current day display is correct and consistent with Today/Overdue
+
+Coach tab loads with no errors after reload
+
+Coach actions are clickable and perform real actions
+
+Domain selection allows 3 max
+
+Smart habit→task suggestions appear and can be accepted into Tasks
+
+No console errors
+
+At the end, provide:
+
+“What was broken and fixed”
+
+“Where to test” checklist

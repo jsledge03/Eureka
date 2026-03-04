@@ -1,0 +1,163 @@
+Run a full end-to-end system audit, refinement, fixing, and improvement pass on this app as if it is shipping to market today. Treat this as a “Release Candidate: stop-the-line” sprint. Do not stop until all loose ends are tied, all functionality is complete, logic is sound, code is clean, UX is iPhone-native, and there are no broken flows.
+
+Critical constraints
+	•	Do not introduce regressions or break working features.
+	•	Prefer incremental fixes and consolidation over rewrites.
+	•	Private personal OS only: local-first, no social, no accounts, no external tracking.
+	•	Anti-redundancy required: do not add features that duplicate existing capability; consolidate instead.
+
+⸻
+
+1) FULL SYSTEM AUDIT SCOPE (must cover everything)
+
+Audit and verify end-to-end on iPhone 15:
+	•	My Day (Morning setup, Midday recalibrate, Close the Loop; scroll + keyboard safe)
+	•	Tasks (Today/Upcoming/Overdue/Completed; CRUD; labels; date logic; search; filters; persistence)
+	•	Habits Hub (CRUD; linking to goals; minimum version; schedule logic; keystone gravity; friction capture)
+	•	Goals (CRUD; domain grouping; goal-intention; progress auto + manual; next best action; linking)
+	•	Review (quarter picker/history; weekly vibe check; Sunday Reset; intelligence suggestions + Accept behavior)
+	•	Coach & Insights (north star identity; season mode; forecast; drift alerts; friction patterns; keystone gravity highlights; proof highlights; next steps actions)
+	•	Identity (editable; values/commitments; evidence; proof timeline; drift sheet)
+	•	Notifications/Reminders (toggles; scheduling; reminder event log; “Earlier today” correctness + daily reset)
+	•	Tooltips (rubrics accurate and match actual calculations; open/close reliably)
+
+For each area:
+	•	identify broken/unfinished logic
+	•	fix it
+	•	confirm persistence after reload
+	•	confirm no console errors
+
+⸻
+
+2) DEAD CODE / DEAD UX / BROKEN HANDLERS ELIMINATION
+	•	Identify and remove or fix dead code paths, unused handlers, placeholder logic, duplicated schedulers, and redundant state.
+	•	Ensure every button/toggle/accept action performs a real state change and gives user feedback (toast/banner).
+	•	If something cannot be supported (e.g., true push without sender), implement a fully working fallback and label it clearly without breaking UX.
+
+⸻
+
+3) THESIS & LOGIC CORRECTNESS VALIDATION
+
+Validate the OS follows:
+
+Identity → Goal-Intention → Habit → Task → Reflection → Adaptation
+
+Confirm:
+	•	Identity is user-authored and never silently rewritten.
+	•	Scores (Daily Rhythm / Rhythm / Identity Alignment) are logically sound, non-shaming, and match tooltip rubrics.
+	•	Drift, forecasting, friction mapping, and keystone gravity are derived from real behavior logs and events.
+	•	Grace and Minimum Version support compassionate accountability (not loopholes).
+	•	Review actions meaningfully affect Coach and My Day (closed loop).
+
+Fix any mismatch between:
+	•	what tooltips say
+	•	what the code actually does
+
+⸻
+
+4) UX / UI REFINEMENT (iPhone-native feel)
+
+Perform an iPhone-native UX pass:
+	•	Fix spacing, safe areas, smashed controls, clipped content, double scroll, modal scroll issues.
+	•	Touch targets ≥44px.
+	•	Remove duplicate close controls (duplicate X’s).
+	•	Bottom nav never overlaps content and hides on keyboard open.
+	•	Sheets are consistent: one close control, scrollable, safe-area padded, sticky Save/Done where needed.
+	•	Make the app feel like a calm iOS utility app: clean, minimal, stable.
+
+⸻
+
+5) SECURITY & PRIVACY HARDENING (local-first)
+
+Do a real lightweight security review:
+	•	Remove sensitive console logging.
+	•	Sanitize user-generated text rendered to UI (prevent XSS/unsafe HTML).
+	•	Validate inputs (no HTML injection).
+	•	Confirm no external analytics or unintended network calls.
+	•	Harden service worker + notifications code to fail gracefully if unsupported.
+	•	Review dependencies; remove unused packages and obvious risks.
+
+⸻
+
+6) ANTI-REDUNDANCY GUARDRAIL (must apply)
+
+Before adding ANY new feature or screen:
+	•	Audit for overlap with existing systems (Coach vs Review vs My Day).
+	•	Consolidate into:
+	•	Coach = primary action + insight surface
+	•	Review = governance layer (weekly/quarterly decisions)
+	•	My Day = execution layer (today’s flow)
+
+At the end, output an “Anti-redundancy report” listing:
+	•	overlaps found
+	•	what was consolidated/removed
+	•	confirmation no duplicate features were introduced
+
+⸻
+
+7) TIE LOOSE ENDS: SYSTEM WIRING CHECKLIST (must pass)
+	•	Task due today appears in Today; overdue in Overdue; local dateKey used consistently.
+	•	Delete/edit works from all derived lists and persists.
+	•	Review “Accept” applies changes AND/OR routes user to the correct place with guidance.
+	•	Midday triage actions create visible changes (defer/reschedule/minimum version) and persist.
+	•	Close the Loop is completable on iPhone (scroll/keyboard safe).
+	•	Reminders: “Earlier today” shows all completed reminders with correct names and resets daily.
+	•	Drift alerts compute, display, and actions work.
+	•	Forecast card updates without flapping and actions work.
+	•	Proof timeline populates and links work.
+	•	Search works across tasks/habits/goals with filters.
+
+⸻
+
+8) SELECTIVE “NEXT-LEVEL” INNOVATIONS (only after stability + no redundancy)
+
+After stability is confirmed, add ONLY the following high-impact features that do not create redundancy and are fully integrated:
+
+8A) Weekly Executive Memo (narrative intelligence)
+
+In Review + Coach:
+	•	Generate a concise weekly narrative:
+	•	what you protected (domains + proof)
+	•	what drifted (why + cause)
+	•	patterns (friction + timing + energy)
+	•	3 actionable recommendations (buttons must work)
+Local-only generation, non-noisy, no fluff.
+
+8B) Cognitive Load Meter + Simplify Sheet (system sustainability)
+
+In Coach:
+	•	Show Cognitive Load (Low/Moderate/High) with top drivers.
+	•	“Simplify” sheet with safe reduction actions:
+	•	pause low leverage items
+	•	reduce frequency
+	•	focus mode toggle
+	•	disable low-value reminders (suggested only)
+All actions must work and persist.
+
+8C) Commitment Budget (gentle by default + strict mode toggle)
+
+Implement a capacity budget:
+	•	Gentle warnings on overload with tradeoff suggestions.
+	•	Strict Mode toggle (suggested in Sprint season) that enforces caps.
+No shaming; explain rules in tooltip sheet; allow pause strict mode for 24h.
+
+(If these already exist, audit them for correctness and integration rather than re-adding.)
+
+⸻
+
+9) FINAL QA + DELIVERABLES (required)
+
+Run a regression pass after all changes:
+	•	no console errors
+	•	reload persistence passes
+	•	all major flows work end-to-end
+	•	no new UI regressions
+
+Deliver:
+	1.	List of issues found and fixed (with location)
+	2.	Security hardening actions taken
+	3.	Any new enhancements added (and where they live)
+	4.	Anti-redundancy report
+	5.	“Where to test” checklist step-by-step
+
+Do not stop until all tests pass and the app is stable, coherent, and ship-ready.

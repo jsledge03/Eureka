@@ -1,0 +1,167 @@
+Run a comprehensive “Long-Term Reliability” audit and optimization pass for this private personal OS app. Priorities: performance, stability, correctness of calculations/metrics, thesis alignment, and removal of clutter/redundancy—without watering down the system. Do not introduce regressions. Do not stop until all issues found are fixed and verified.
+
+Critical rule: Permission gate
+Before deleting, removing, or consolidating any feature, UI section, button, metric, or data field, you MUST:
+	1.	Produce a proposed change list with rationale and impact, and
+	2.	Ask for my approval (YES/NO per item) before applying destructive or consolidating changes.
+You may refactor internals safely without asking, but any user-visible removal/consolidation requires approval.
+
+⸻
+
+1) PERFORMANCE & STABILITY AUDIT (iPhone-first)
+
+1A) Runtime performance
+	•	Identify and fix slow renders, unnecessary re-renders, and expensive derived computations.
+	•	Add memoization/selectors where needed.
+	•	Ensure list rendering is efficient (virtualization if needed).
+	•	Debounce search and any real-time filtering.
+	•	Avoid heavy work on every keystroke (especially in Coach/Insights).
+
+1B) App stability & error handling
+	•	Eliminate all console errors/warnings on load, navigation, and actions.
+	•	Add defensive guards for empty states and missing references.
+	•	Ensure no crashes with empty data, partial data, or older stored schema.
+	•	Ensure modals/sheets always open/close reliably and are scroll/keyboard safe.
+
+1C) State + persistence architecture
+	•	Audit and enforce “single source of truth” for tasks/goals/habits/logs.
+	•	Ensure derived views never mutate primary data.
+	•	Add schema versioning/migrations to prevent storage drift and future breakage.
+	•	Validate consistent local dateKey logic across Tasks, My Day, Review, Reminders, Logs.
+
+Deliverable: a short summary of performance changes + any migrations added.
+
+⸻
+
+2) METRICS & SCORING CORRECTNESS AUDIT (sound + intuitive)
+
+Audit every calculation to ensure:
+	•	logic is correct
+	•	intuitive and non-shaming
+	•	tooltips match actual code
+	•	changes propagate through insights
+
+Metrics to audit (and any others present):
+	•	Daily Rhythm (daily log creation + signals)
+	•	Identity Alignment (rubric weights + inputs)
+	•	Rhythm Score (rolling window + grace handling)
+	•	Drift signals (thresholds + actions)
+	•	Forecast (stability + non-flapping)
+	•	Keystone Gravity (leverage heuristics)
+	•	Friction mapping summaries
+	•	Commitment budget / cognitive load (if present)
+	•	Memo content derivation
+
+For each metric:
+	1.	Confirm data inputs (what tables/objects it reads)
+	2.	Confirm algorithm steps
+	3.	Confirm outputs update when user behavior changes
+	4.	Confirm UI displays correct labels and explanations
+	5.	Add lightweight unit-test-like checks (or internal test harness) for edge cases:
+	•	empty data
+	•	new user
+	•	timezone boundary
+	•	low energy days
+	•	grace days
+	•	completed vs overdue tasks
+
+If any metric is logically flawed, overly punitive, noisy, or inconsistent, fix it and ensure results feel human and executive.
+
+Deliverable: “Metrics Audit Report” listing each metric, its inputs, and the final corrected logic.
+
+⸻
+
+3) UX / UI FUNCTIONALITY AUDIT (nothing broken, nothing dead)
+
+Verify every interactive element works:
+	•	buttons
+	•	toggles
+	•	dropdowns
+	•	text boxes
+	•	edit/delete flows
+	•	“Apply” actions
+	•	“Accept” suggestion actions
+	•	navigation and deep-links
+	•	modal close controls (remove duplicate X issues)
+
+Fix:
+	•	any non-functional action
+	•	any confusing routing (e.g., memo routing)
+	•	any iPhone scroll blocking or safe-area overlap
+	•	any keyboard overlay issues
+	•	any inconsistent touch targets (<44px)
+
+Deliverable: a “UI Functionality Checklist” of what was tested and fixed.
+
+⸻
+
+4) THESIS ALIGNMENT & CLARITY AUDIT (holistic-executive OS)
+
+Ensure the whole system aligns with the theses and intent:
+
+Identity → Goal-Intention → Habit → Task → Reflection → Adaptation
+
+Check:
+	•	identity is foundational and referenced appropriately (not decorative)
+	•	strategic intent/trajectory are clear and not polluted with unrelated metrics
+	•	coach/review/my day each have distinct purpose:
+	•	Coach = intelligence + actions
+	•	Review = governance
+	•	My Day = execution
+
+Identify any parts that:
+	•	feel cluttered
+	•	repeat information without adding value
+	•	show metrics in too many places
+	•	create decision fatigue
+	•	conflict with the executive tone
+
+Permission-gated refinement:
+If you recommend removing/merging/relocating UI or metrics, compile them into a proposal list and ask for approval before applying.
+
+Deliverable: “Clutter & Redundancy Proposal” with YES/NO approval required.
+
+⸻
+
+5) INSIGHTS DEPTH AUDIT (fully flushed out)
+
+Ensure insights are:
+	•	derived from real behavior data
+	•	specific and contextual (not generic)
+	•	actionable (with working next-step buttons)
+	•	not repetitive or noisy
+
+Enhance where needed:
+	•	Tie reflections/check-ins to insight generation
+	•	Ensure drift/forecast/friction/gravity/proof all feed the advisory surfaces
+	•	Prevent duplicate insights showing in multiple places unless necessary
+
+Deliverable: “Insights Coverage Report” listing what data sources feed what insights.
+
+⸻
+
+6) FINAL REGRESSION TEST PASS (must pass)
+
+Before finishing:
+	•	No console errors
+	•	Persistence after reload
+	•	Today/Overdue accurate
+	•	Delete/edit works from all derived lists
+	•	Reminders log correct and resets daily
+	•	Memo readable and dismissible
+	•	Coach actions all work
+	•	Sunday reset completes and applies changes
+	•	Metrics update after actions and reflect reality
+
+⸻
+
+7) END OUTPUT (required)
+
+Provide:
+	1.	Performance & Stability changes made
+	2.	Metrics Audit Report (what was fixed and how)
+	3.	UI Functionality fixes
+	4.	Proposed clutter/redundancy changes requiring my approval (do not apply without approval)
+	5.	Where-to-test checklist
+
+Do not stop until all non-permission-gated issues are fixed and verified.

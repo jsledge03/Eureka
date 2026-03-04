@@ -1,0 +1,258 @@
+Excellent. Below is CEO-level, human-centered microcopy for:
+	•	Strategic Intent
+	•	Strategic Trajectory
+	•	Weekly Executive Memo
+	•	Coach references to Intent
+	•	Trajectory output language
+	•	Field prompts
+	•	Action language
+
+This is designed to feel calm, intelligent, grounded in self-leadership — not productivity-hype, not robotic.
+
+⸻
+
+🔷 STRATEGIC INTENT
+
+(Foundational. Declarative. Focused.)
+
+Tooltip (ⓘ)
+
+Strategic Intent clarifies what you are optimizing for right now.
+It defines what matters most this season — and what you are willing to deprioritize.
+
+It is not metrics.
+It is not a to-do list.
+It is a leadership stance.
+
+When decisions compete, Strategic Intent decides.
+
+⸻
+
+Field Prompt (editable text area)
+
+Prompt header:
+What are you optimizing for in this season?
+
+Helper text:
+Complete the sentence:
+	•	“Right now, I am prioritizing ___ over ___.”
+	•	“For this season, success means ___.”
+	•	“I am protecting ___ and intentionally letting go of ___.”
+	•	“If nothing else moves forward, I will ensure ___.”
+
+Encourage clarity over complexity.
+One or two sentences is enough.
+
+⸻
+
+Example (placeholder, not pre-filled)
+
+“Right now, I am prioritizing stability and energy recovery over aggressive expansion. I will protect sleep, fitness, and deep work consistency.”
+
+⸻
+
+🔷 STRATEGIC TRAJECTORY
+
+(Directional. Reflective. Course-correcting.)
+
+Tooltip (ⓘ)
+
+Strategic Trajectory shows where your current behaviors are leading.
+
+It analyzes:
+	•	Alignment trends
+	•	Friction patterns
+	•	Drift signals
+	•	Energy and load trends
+
+It answers:
+If you keep operating this way, what happens next?
+
+It helps you steer — not react.
+
+⸻
+
+Trajectory Structure (Auto-Generated)
+
+1) Direction Summary (2 sentences max)
+
+Tone example:
+
+“Your system is trending toward stable execution with rising load. Momentum is strong, but recovery signals are weakening.”
+
+OR
+
+“Your current operating pattern supports your stated intent. Drift risk is low, and domain balance is stabilizing.”
+
+⸻
+
+2) Tailwinds (What’s working)
+	•	Consistent keystone habit execution
+	•	Overdue backlog decreasing
+	•	Reflection frequency rising
+	•	Friction declining in high-priority domain
+
+Language tone:
+
+“Execution discipline is compounding.”
+
+⸻
+
+3) Headwinds (What’s costing you)
+	•	Rising friction in Fitness
+	•	Overdue tasks increasing midweek
+	•	Reduced recovery signals
+	•	Frequent overload check-ins
+
+Tone:
+
+“System strain is emerging in ___.”
+
+No shame. No drama.
+
+⸻
+
+4) Course Corrections (Actionable, clickable)
+
+Buttons:
+	•	Reduce active goals to 3
+	•	Convert ___ to Minimum Version
+	•	Schedule 15-min backlog sprint
+	•	Switch to Stabilize season
+	•	Protect recovery block
+	•	Add constraint: No new commitments this week
+
+Each must apply real change.
+
+⸻
+
+🔷 WEEKLY EXECUTIVE MEMO
+
+(Board-level self-review)
+
+Header
+
+Weekly Executive Memo
+Week of: [Date Range]
+
+⸻
+
+Section 1: What You Protected
+
+“You protected Deep Work and Fitness despite midweek friction.”
+
+⸻
+
+Section 2: What Drifted (and likely why)
+
+“Reflection declined after Tuesday. Energy ratings dropped, suggesting load exceeded sustainable range.”
+
+⸻
+
+Section 3: Emerging Patterns
+
+“Friction clusters around late evenings. Overdue tasks accumulate when task count exceeds 5.”
+
+⸻
+
+Section 4: Strategic Recommendations
+
+Tone: decisive but calm.
+
+	1.	Reduce active goals to 3 for clarity.
+	2.	Protect one recovery block midweek.
+	3.	Convert 1 habit to Minimum Version to maintain consistency.
+
+Each recommendation must be actionable.
+
+⸻
+
+🔷 COACH VOICE REFINEMENT
+
+(Across entire app)
+
+Coach tone should feel:
+	•	Strategic, not motivational
+	•	Calm, not urgent
+	•	Precise, not verbose
+	•	Compassionate, not indulgent
+
+Examples:
+
+Instead of:
+
+“You’re falling behind.”
+
+Use:
+
+“System load is rising. Simplifying now preserves momentum.”
+
+Instead of:
+
+“You failed to complete habits.”
+
+Use:
+
+“Consistency dipped. Would you like to redesign for sustainability?”
+
+Instead of:
+
+“You must reduce goals.”
+
+Use:
+
+“Reducing to 3 active goals may increase clarity and follow-through.”
+
+⸻
+
+🔷 STRATEGIC PLAN INTEGRATION MICROCOPY
+
+In Coach card:
+
+Header:
+Strategic Plan
+
+Subtext:
+Your Intent sets direction.
+Your Trajectory shows where you’re headed.
+
+⸻
+
+🔷 STRICT MODE LANGUAGE (if enabled)
+
+Strict Mode ON:
+
+“You are operating in Sprint discipline. Tradeoffs are required to add new commitments.”
+
+Strict Mode OFF (Gentle):
+
+“You’re approaching capacity. Would you like to simplify?”
+
+⸻
+
+🔷 REDUNDANCY REFINEMENT MICROCOPY
+
+When consolidating features:
+
+Instead of deleting:
+
+“This setting has been removed.”
+
+Use:
+
+“This now lives in Coach to keep your system centralized.”
+
+⸻
+
+🔷 FINAL COHERENCE CHECK
+
+After this is implemented, the app should feel like:
+	•	A personal strategy dashboard
+	•	A reflective executive operating system
+	•	A calm advisor
+	•	A self-leadership architecture
+
+Not:
+	•	A productivity tracker
+	•	A motivational app
+	•	A gamified habit streak system

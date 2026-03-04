@@ -1,0 +1,71 @@
+Perform a Release Candidate hardening pass with regression safety. Do not add new features yet beyond the required Inbox→Overdue rename. The priority is: nothing broken, no incomplete logic, consistent persistence, and no regressions.
+
+A) Replace “Inbox” with “Overdue” in Tasks
+
+Remove the Inbox view/tab everywhere.
+
+Add Overdue view/tab:
+
+Definition: tasks that are NOT completed AND have a due date before today (local date) OR have due datetime earlier than now (if datetime supported).
+
+Tasks with no due date are NOT overdue (they remain in their natural lists like Upcoming/Today, or a neutral bucket if you have one).
+
+Update navigation, route names, labels, filters, and any references in Coach/Review logic.
+
+Ensure Overdue updates live when:
+
+time crosses midnight
+
+due date is edited
+
+task marked complete
+
+QA: Create past-due task; verify appears in Overdue. Complete it; it disappears. Edit due date to future; it disappears.
+
+B) Regression + integrity hardening checklist (must pass)
+
+Implement automated and/or manual test coverage (lightweight) and defensive logic to prevent breakage:
+
+1) Persistence hardening
+
+Validate store hydration from local storage/IndexedDB handles missing/old fields gracefully.
+
+Add schema versioning and migration if needed to avoid “undefined field” crashes.
+
+2) Referential integrity
+
+If a goal is deleted: prompt to delete linked habits/tasks OR reassign OR cancel.
+
+If a habit is deleted: handle linked tasks (unlink or delete).
+
+Ensure no orphan pointers remain in store.
+
+Add store-level “cleanup” function run on load.
+
+3) Filtering correctness (especially after delete and in derived views)
+
+Ensure every view (Today/Upcoming/Overdue/Completed) derives from one source of truth.
+
+Verify delete/edit works from every derived list and persists.
+
+4) UX polish safety
+
+Ensure iPhone keyboard-safe behavior still works.
+
+Ensure quarter picker still scrolls and touch targets remain large.
+
+C) Bug sweep (do not stop until clean)
+
+Scan console for errors/warnings and fix.
+
+Ensure all buttons in Coach/Review/Habits/Tasks have working handlers.
+
+Ensure every modal/sheet has Save/Cancel and closes reliably.
+
+Deliver with:
+
+a “QA checklist” section listing each flow verified
+
+a short “What changed” summary
+
+confirm Inbox is removed and Overdue works

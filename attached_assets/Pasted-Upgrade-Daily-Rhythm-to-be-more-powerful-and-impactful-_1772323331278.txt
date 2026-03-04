@@ -1,0 +1,116 @@
+Upgrade “Daily Rhythm” to be more powerful and impactful WITHOUT adding complexity or breaking existing systems. Add only enhancements that are stable and fully functional.
+
+A) Daily Rhythm v2 (iPhone-first)
+
+Daily Rhythm should become the daily operating flow that shapes behavior.
+
+Morning “Set the Day” (60 seconds)
+
+Add an optional quick flow accessible from Today and Coach:
+
+Energy (1–5)
+
+Mood (simple)
+
+Capacity mode: Push / Sustain / Recover
+
+Choose today’s Top 1–3 outcomes (pull from quarter outcomes + week outcomes; user can edit)
+
+Auto-suggest:
+
+1 keystone habit
+
+1 “Minimum Version (Plan B)” habit if low energy
+
+3 tasks (prioritized) with a one-tap accept
+
+Midday “Recalibrate” (20 seconds)
+
+“How’s the day going?” (On track / Behind / Overloaded)
+
+If overloaded: show a “Drop / Defer / Minimum Version” triage UI:
+
+Defer selected tasks
+
+Convert selected habits to Minimum Version for today
+
+Suggest 1 constraint reminder
+
+Evening “Close the Loop” (60 seconds)
+
+Quick reflection (wins, friction, one lesson)
+
+Auto-update Coach insights signals:
+
+friction tags
+
+grace usage
+
+domain drift
+
+Suggest one micro-adjustment for tomorrow.
+
+All three must:
+
+save instantly
+
+feed the Coach recommendations
+
+never block user with too many prompts (allow skip)
+
+B) Daily Rhythm should influence tasks/habits automatically (safe rules)
+
+Implement safe adaptive rules:
+
+If energy <=2 → default today to Minimum Version suggestions + reduce task target
+
+If Overdue tasks > N → coach suggests a “clean-up sprint” with a single button that creates a 15-min Overdue block
+
+If user repeatedly misses same habit → prompt “Friction Fix” (cue/environment field)
+
+Buttons must route and apply changes.
+
+C) Add “Integrity / Alignment” (optional, non-shaming)
+
+Add a gentle indicator (not a score obsession):
+
+“Did today reflect who you’re becoming?” (1–5)
+Use it only for insights, not punishment.
+
+D) OS-level enhancements that are low-risk + high impact
+
+Add only if fully functional and tested:
+
+“Pause” state for habits/goals
+
+Pause instead of delete (prevents loss + supports seasons)
+
+Coach can recommend pausing
+
+“Recovery Lane” for tasks
+
+One-tap move a task into Recovery (not completed, not overdue)
+
+Requires a replan date; prevents guilt pile
+
+Smart “Focus Mode” toggle
+
+When on: Today shows only top 3 tasks + keystone habits
+
+Reduces cognitive load
+
+E) Final Regression Test (must pass)
+
+Overdue works
+
+Sunday Reset still works
+
+Goal progress auto + manual still works
+
+Coach actions still work
+
+No console errors
+
+Persistence reload passes
+
+Deliver a short “How to use Daily Rhythm v2” and a “Where to test” checklist.

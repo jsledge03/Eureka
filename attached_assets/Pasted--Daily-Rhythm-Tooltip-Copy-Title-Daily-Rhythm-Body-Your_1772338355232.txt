@@ -1,0 +1,116 @@
+🔵 Daily Rhythm Tooltip Copy
+
+Title:
+Daily Rhythm
+
+Body:
+
+Your Daily Rhythm is not about perfection.
+It’s about alignment, energy awareness, and consistent movement.
+
+Each day moves through five stages:
+
+State – Your energy and capacity.
+
+Intent – What matters today.
+
+Action – Habits and tasks completed.
+
+Reflection – What worked and what didn’t.
+
+Adaptation – Adjusting tomorrow accordingly.
+
+Low-energy days are not failures.
+Using a Minimum Version or reducing scope is intelligent self-leadership.
+
+This is a compass — not a grade.
+
+🟣 Identity Alignment Score Tooltip Copy
+
+Title:
+Identity Alignment
+
+Body:
+
+This score reflects how closely your actions matched the person you’re becoming.
+
+It blends four signals:
+
+• Intentionality (30%)
+Did you define what mattered today?
+
+• Congruent Action (40%)
+Did your completed habits and tasks support your goals and identity?
+
+• Integrity Under Constraints (20%)
+On low-energy days, did you adapt wisely instead of forcing it?
+
+• Reflection (10%)
+Did you close the loop and learn?
+
+This score is about congruence — not volume.
+A focused, aligned day can score higher than a busy one.
+
+This is feedback, not judgment.
+
+🟢 Rhythm Score Tooltip Copy
+
+Title:
+Rhythm Score
+
+Body:
+
+Rhythm measures consistency over time — not streaks.
+
+It uses a rolling 14-day window:
+
+• Habits (70%) – Are you showing up for what you scheduled?
+• Tasks (30%) – Are commitments being completed reliably?
+
+Grace days count as neutral — they prevent shame spirals while protecting consistency.
+
+Rhythm rewards steadiness, not intensity.
+
+You don’t need perfect days.
+You need sustainable ones.
+
+🟡 Momentum Tooltip Copy (if shown)
+
+Title:
+Momentum
+
+Body:
+
+Momentum reflects forward movement in the present week.
+
+It increases when:
+• You complete priority tasks
+• You execute keystone habits
+• You follow through on your reset intentions
+
+It dips when:
+• Tasks accumulate without triage
+• Habits are repeatedly skipped without adaptation
+
+Momentum is directional — not moral.
+
+If it dips, recalibrate.
+If it rises, protect the structure that created it.
+
+Optional Micro-Line Under All Tooltips
+
+At the bottom of each tooltip:
+
+“This system is designed to help you adapt — not to evaluate you.”
+
+UX Guidance (Important)
+
+Make sure:
+
+Tooltips open as bottom sheets on iPhone
+
+They are scrollable
+
+Text is not too small
+
+Tone feels calm, not corporate

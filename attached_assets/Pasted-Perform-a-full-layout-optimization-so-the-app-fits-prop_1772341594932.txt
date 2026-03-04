@@ -1,0 +1,222 @@
+Perform a full layout optimization so the app fits properly on an iPhone 15 display and feels like a native Apple app. Do not change functionality. Do not break routing, state, or persistence. This is strictly a layout + responsive + safe-area correction pass.
+
+1️⃣ Respect iPhone Safe Areas (Critical)
+
+Implement full safe-area support:
+
+Use viewport-fit=cover in meta viewport tag.
+
+Add padding using:
+
+env(safe-area-inset-top)
+
+env(safe-area-inset-bottom)
+
+env(safe-area-inset-left)
+
+env(safe-area-inset-right)
+
+Top header must not sit under the Dynamic Island.
+Bottom navigation must not sit under the home indicator.
+
+Apply:
+
+padding-top: env(safe-area-inset-top);
+padding-bottom: env(safe-area-inset-bottom);
+
+to the main app wrapper.
+
+2️⃣ Use Proper Mobile Height Units
+
+Replace any use of:
+
+100vh
+
+With:
+
+100dvh
+
+or a properly calculated dynamic height that accounts for mobile browser UI.
+
+Ensure no layout “jumping” when Safari chrome hides/shows.
+
+3️⃣ Fix Scroll Containers
+
+Each tab screen must:
+
+Be vertically scrollable.
+
+Not cause double scroll.
+
+Not have content hidden behind bottom nav.
+
+Pattern:
+
+Main wrapper:
+
+display: flex
+
+flex-direction: column
+
+height: 100dvh
+
+Scrollable content:
+
+flex: 1
+
+overflow-y: auto
+
+padding-bottom should account for bottom nav + safe-area
+
+4️⃣ Bottom Navigation Polish
+
+Make bottom nav feel native:
+
+Height: ~60–70px (plus safe-area bottom)
+
+Blur background or subtle solid (Apple-style)
+
+Proper spacing between icons
+
+No cramped labels
+
+Active tab has subtle tint (not neon)
+
+Touch target min 44px
+
+Ensure:
+
+Bottom nav never overlaps content
+
+Keyboard hides bottom nav when typing
+
+5️⃣ Header / Top Bar Alignment
+
+Top header should:
+
+Be sticky
+
+Have proper padding (16px horizontal minimum)
+
+Align title like iOS large title style (but subtle)
+
+Not clip under safe-area
+
+If using large titles:
+
+Collapse properly when scrolling
+
+6️⃣ Spacing System Standardization
+
+Standardize spacing to Apple-like rhythm:
+
+Use consistent scale:
+
+8px grid system
+
+Card padding: 16–20px
+
+Section spacing: 24px
+
+Button vertical padding: 12–14px
+
+Touch target min height: 44px
+
+Remove:
+
+Any cramped stacked buttons
+
+Any uneven padding between sections
+
+7️⃣ Modal / Bottom Sheet Fixes
+
+All bottom sheets must:
+
+Respect safe-area bottom
+
+Be scrollable
+
+Not cut off “Save” buttons
+
+Snap to appropriate height
+
+Have drag handle indicator (subtle)
+
+8️⃣ Improve Visual Weight Distribution
+
+Reduce clutter:
+
+Increase whitespace between cards
+
+Remove heavy borders
+
+Prefer subtle shadow or thin divider
+
+Avoid dense stacked UI blocks
+
+Goal: “calm native iOS utility app”, not “web dashboard”
+
+9️⃣ Dark Mode Compatibility (If Present)
+
+Ensure layout spacing and safe areas work identically in dark mode.
+
+🔟 iPhone 15 Specific QA
+
+Simulate:
+
+iPhone 15 viewport (approx 393 x 852 CSS px)
+
+Ensure no horizontal overflow
+
+Ensure no clipped content
+
+Ensure no layout jitter
+
+Test:
+
+Today / My Day
+
+Tasks
+
+Habits Hub
+
+Goals
+
+Review
+
+Coach & Insights
+
+Sunday Reset flow
+
+Close the Loop
+
+Modals
+
+Tooltips
+
+No content should:
+
+Sit under notch
+
+Sit under home indicator
+
+Be clipped
+
+Require horizontal scrolling
+
+Final Deliverable
+
+Provide:
+
+Summary of layout changes
+
+Screens tested
+
+Confirmation no functionality was altered
+
+Confirmation no console errors
+
+Do not introduce new styling frameworks.
+Do not rewrite routing.
+Do not modify state logic.
+This is strictly layout and UI refinement for iPhone 15

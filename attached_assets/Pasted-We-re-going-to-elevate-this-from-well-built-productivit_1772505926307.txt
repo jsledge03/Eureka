@@ -1,0 +1,315 @@
+We’re going to elevate this from “well-built productivity system” to a Holistic Executive Operating System.
+
+Not motivational.
+Not fluffy.
+Not rigid.
+
+Strategic. Integrated. Self-led.
+
+Below is a complete Replit Agent prompt that integrates:
+	1.	Strategic Intent Builder (guided setup flow)
+	2.	Stronger Strategic Trajectory (predictive + analytical)
+	3.	Weekly Executive Memo (board-level intelligence)
+	4.	Executive-level Coach tone refinement
+	5.	Holistic integration across physical, emotional, mental, social, spiritual, career, financial domains
+	6.	Redundancy refinement (without gutting power)
+	7.	Full QA and system coherence pass
+
+Paste this into Replit Agent.
+
+⸻
+
+✅ Replit Agent Prompt
+
+Holistic Executive OS Refinement + Strategic Deepening + Full System Coherence
+
+MESSAGE
+
+Elevate the app into a Holistic Executive Operating System. Refine and integrate Strategic Intent, Strategic Trajectory, Weekly Executive Memo, and Coach voice so the system feels board-level, human-centered, and holistically intelligent across all life domains (physical, emotional, mental, social, spiritual, career, financial). Do not water down features. Refine and deepen. Remove redundancy carefully without gutting capability.
+
+Do not introduce regressions. Run full QA after changes.
+
+⸻
+
+1️⃣ STRATEGIC INTENT BUILDER (Guided Flow)
+
+Replace the current plain Strategic Intent field with a guided executive builder.
+
+Step 1: Optimization Focus
+
+Prompt:
+	•	“What are you optimizing for in this season?”
+Options (multi-select + editable):
+	•	Stability
+	•	Growth
+	•	Recovery
+	•	Expansion
+	•	Discipline
+	•	Strategic repositioning
+	•	Financial strength
+	•	Health resilience
+	•	Relational depth
+	•	Spiritual grounding
+	•	Custom
+
+Step 2: Tradeoff Declaration
+
+Prompt:
+	•	“What are you intentionally deprioritizing?”
+Allow free text.
+
+Step 3: Protection Statement
+
+Prompt:
+	•	“What must be protected at all costs?”
+Free text.
+
+Output
+
+Generate a 1–2 sentence Strategic Intent summary that is editable.
+
+Ensure:
+	•	Stored cleanly
+	•	Used by Coach recommendations
+	•	Referenced in Weekly Memo
+	•	Visible in Strategic Plan card
+
+Remove Grace Bank, Daily Rhythm, and Theme from this section entirely.
+
+⸻
+
+2️⃣ STRATEGIC TRAJECTORY 2.0 (Predictive + Analytical)
+
+Redesign trajectory to be data-forward and executive-level.
+
+Inputs
+	•	Identity Alignment trend
+	•	Rhythm trend
+	•	Cognitive Load
+	•	Commitment Budget usage
+	•	Drift signals
+	•	Friction density
+	•	Domain distribution vs stated emphasis
+	•	Season Mode
+
+Output Structure
+
+A) Directional Read
+
+Example tone:
+
+“Execution momentum is rising, but system strain is emerging in Recovery and Reflection.”
+
+B) System Risk Outlook
+	•	Stability: Stable / Watch / Elevated Risk
+	•	Burnout Risk: Low / Moderate / High
+	•	Drift Risk: Low / Moderate / High
+
+C) Strategic Leverage
+
+Highlight:
+	•	Top keystone habit influence
+	•	Highest friction cluster
+	•	Most underinvested domain
+
+D) 3 Course Corrections
+
+Must be actionable and functional:
+	•	Reduce active goals
+	•	Switch season
+	•	Convert habits to Minimum Version
+	•	Add constraint
+	•	Protect recovery
+	•	Schedule backlog sprint
+
+Ensure buttons apply real changes.
+
+⸻
+
+3️⃣ WEEKLY EXECUTIVE MEMO (Board-Level Intelligence)
+
+Rebuild memo to feel like a CEO review.
+
+Structure
+
+1. Executive Summary (2–3 sentences)
+
+Strategic tone.
+
+2. Domain Balance Review
+
+Show domain distribution vs emphasis.
+Highlight over/under allocation.
+
+3. Operational Highlights
+	•	Keystone completions
+	•	Proof milestones
+	•	Stability gains
+
+4. Operational Risks
+	•	Drift patterns
+	•	Friction trends
+	•	Overload signals
+
+5. Recommended Focus for Next Week
+
+3 actionable buttons.
+
+UX Fix
+
+“Read Full Memo” must:
+	•	Open dedicated bottom sheet
+	•	Scrollable
+	•	Swipe-down dismiss
+	•	Not route to Sunday Reset
+	•	Include date range
+	•	Include Close button (single control)
+
+⸻
+
+4️⃣ EXECUTIVE COACH VOICE REFINEMENT
+
+Rewrite Coach tone globally:
+
+Voice traits:
+	•	Calm
+	•	Strategic
+	•	Analytical
+	•	Compassionate but firm
+	•	No hype
+	•	No shame
+	•	No fluff
+
+Examples:
+
+Instead of:
+“You’re behind.”
+
+Use:
+“System strain is increasing. Simplifying now protects consistency.”
+
+Instead of:
+“You failed to complete…”
+
+Use:
+“Execution dipped. Redesigning scope may restore alignment.”
+
+Ensure tone consistent across:
+	•	Drift alerts
+	•	Forecast
+	•	Capacity warnings
+	•	Strict mode prompts
+
+⸻
+
+5️⃣ HOLISTIC DOMAIN INTEGRATION
+
+Ensure all analytics consider domains:
+
+Domains:
+	•	Physical
+	•	Emotional
+	•	Mental
+	•	Social
+	•	Spiritual
+	•	Career
+	•	Financial
+
+Strategic Plan must:
+	•	Compare domain emphasis vs actual time/task allocation
+	•	Highlight imbalance
+	•	Suggest recalibration
+
+Add:
+Domain Allocation Snapshot in Review:
+	•	Pie or bar distribution
+	•	Underinvested domain callout
+	•	Actionable suggestion
+
+⸻
+
+6️⃣ REDUNDANCY & BLOAT SWEEP (Refine, Don’t Gut)
+
+Audit overlap between:
+	•	Coach vs Review recommendations
+	•	Drift vs Forecast vs Cognitive Load warnings
+	•	Season Mode vs Strict Mode
+
+Consolidate intelligently:
+	•	Coach = action surface
+	•	Review = governance layer
+	•	My Day = execution layer
+
+Do NOT remove capabilities.
+Merge surfaces where duplication exists.
+
+Produce Anti-Redundancy Report:
+	•	overlaps found
+	•	refinements made
+	•	why clarity improved
+
+⸻
+
+7️⃣ SYSTEM COHERENCE PASS
+
+Ensure:
+	•	Strategic Intent influences:
+	•	Coach suggestions
+	•	Trajectory analysis
+	•	Weekly Memo
+	•	Drift sensitivity (context-aware)
+	•	Review changes update Coach immediately.
+	•	Coach actions update Review and Plan.
+	•	Identity remains foundational and untouched automatically.
+
+No isolated systems.
+
+⸻
+
+8️⃣ FULL QA + STABILITY PASS
+
+Before stopping:
+	•	No console errors
+	•	All buttons functional
+	•	All modals scrollable
+	•	No duplicate close icons
+	•	Date logic correct
+	•	Persistence after reload works
+	•	No regression in:
+	•	Tasks
+	•	Sunday Reset
+	•	Reminders
+	•	Drift
+	•	Forecast
+	•	Gravity
+	•	Friction
+	•	Capacity
+	•	Strict Mode
+
+⸻
+
+9️⃣ FINAL DELIVERABLES
+
+Output:
+	1.	What was refined and why
+	2.	Any logic corrections made
+	3.	Anti-redundancy report
+	4.	Where to test checklist
+	5.	Confirmation: system is holistic, executive-level, and stable
+
+END MESSAGE
+
+⸻
+
+What This Will Feel Like After
+
+You won’t have:
+	•	A productivity app.
+	•	A habit tracker.
+	•	A dashboard of metrics.
+
+You’ll have:
+	•	A private executive command center.
+	•	A leadership mirror.
+	•	A self-governance system.
+	•	A holistic performance architecture.

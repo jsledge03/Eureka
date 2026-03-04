@@ -1,0 +1,166 @@
+Make the Life Compass app fully functional and fix broken interactions. Treat this as a bug-fix + UX completion sprint. Do not stop until all listed behaviors work end-to-end and persist after reload.
+
+A) Tasks: Delete + edit must work everywhere
+
+In Tasks lists (Inbox/Today/Upcoming/Completed and any filtered views), every task row must have a working delete (trash) action:
+
+Clicking trash removes task from store immediately
+
+Task never reappears after reload
+
+Works in every filtered list (not only master list)
+
+Add confirm dialog, and an Undo toast if feasible
+
+Task fields must be editable:
+
+Due date picker must open, change, save, and reflect immediately
+
+Tags/labels must be editable (add/remove)
+
+Priority editable
+
+B) Quarter selection + quarter history must be visible and adjustable
+
+Create a quarter selector control on the Review page:
+
+Year selector + Q1/Q2/Q3/Q4 selector
+
+User can set “current quarter”
+
+Persist selection across reload
+
+Maintain a quarter history list (previous quarters/years)
+
+Allow “Clone this quarter” to start a new quarter from a prior template
+
+Data model requirement:
+
+Store quarter plans keyed by year-quarter
+
+Store currentQuarterKey separately and persist
+
+C) Constraints + Not-to-do: improve logic and make it usable
+
+Right now constraints/not-to-do should NOT be random fields.
+Implement a “derive suggestions” helper that proposes constraints + not-to-do from real signals:
+Inputs:
+
+of active goals/habits/tasks (capacity)
+
+Domain imbalance (neglected domains)
+
+Habit friction notes + miss frequency
+
+User energy budget (simple slider or 1–5)
+
+Optional: “big rocks this quarter” (top 1–3 priorities)
+
+Outputs:
+
+Suggested Constraints (structured): time / energy / boundary / attention
+
+Suggested Not-to-Do (structured): avoid / limit / defer
+Each suggestion must have:
+
+Rationale (“because…”)
+
+One-tap Accept (adds it to list)
+
+Editable after acceptance
+
+D) Replace Projects with Goal Progress Bars (quarter roll-up)
+
+Remove the “Projects” section.
+Replace with “Quarter Goal Progress” module:
+
+Show each goal in the quarter with a progress bar
+
+Progress computed from either:
+a) goal’s own metric progress (user-entered current vs target), OR
+b) roll-up from linked habit completion + linked tasks completion (choose best available)
+
+Allow editing goal target/current progress directly
+
+Show overall quarter progress roll-up
+
+E) Sunday Reset Protocol must actually work
+
+The “Start Reset Protocol” button must launch a real flow:
+Step 1: Review last week
+
+completion stats, rhythm, grace usage, domain balance
+Step 2: Choose next week focus
+
+pick 1–2 focus domains + top 3 outcomes
+Step 3: Recalibrate habits
+
+suggest simplifying habits that slipped (toggle to “2-minute version”)
+Step 4: Generate tasks
+
+create suggested tasks for the week (user can accept/edit)
+Finish: Apply changes and return user to Today / Tasks with updated plan
+
+F) Coach overlay → Coach & Insights TAB (and actions must work)
+
+Convert the coach overlay into a dedicated main navigation tab: “Coach & Insights”.
+(You may keep a small Coach shortcut button, but primary experience is the tab.)
+
+Coach & Insights tab must include:
+
+Momentum + Rhythm metrics
+
+Grace days remaining/used (and ability to activate a grace day)
+
+Domain balance snapshot
+
+Quarter Goal Progress bars
+
+Patterns/Insights (simple but real)
+
+“Next Steps” section with 3–5 prioritized recommendations
+
+Every “Next Step” must be clickable and do something real:
+Examples:
+
+“Simplify habit” opens habit editor for the relevant habit and highlights “2-minute version”
+
+“Schedule task” opens quick-add with due date prefilled
+
+“Use grace day” applies grace to the relevant missed habit/day and updates scoring immediately
+If context is missing, provide a safe fallback (open the right page with a hint message).
+
+G) Grace Days functionality must be real
+
+Grace days/week must be configurable.
+User can apply grace when a habit is missed:
+
+Should not penalize rhythm when grace is applied
+
+Show remaining grace days clearly
+
+Persist across reload
+
+H) QA checklist (must pass)
+
+Create/edit/delete goals works
+
+Create/edit/delete habits works
+
+Link/unlink habits to goals works
+
+Create/edit/delete tasks works (including delete in filtered views)
+
+Quarter switching works
+
+Quarter history works
+
+Sunday reset flow works
+
+Coach & Insights “Next steps” actions work
+
+Persistence works (reload test)
+
+Mobile keyboard-safe behavior remains (no UI blocked by keyboard)
+
+Deliver changes with a quick note listing what you fixed and where to test each item.

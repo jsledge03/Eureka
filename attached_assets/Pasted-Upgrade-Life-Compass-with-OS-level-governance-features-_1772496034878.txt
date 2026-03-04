@@ -1,0 +1,212 @@
+Upgrade Life Compass with OS-level governance features while keeping the experience gentle by default, with an optional Strict Mode toggle for Sprint season. Do not add redundant features; consolidate wherever possible. Do not break existing working systems (Identity, My Day, Review, Coach, Seasons, Forecast, Drift, Friction, Keystone Gravity, Proof Timeline, Notifications).
+
+Guiding principles
+	•	Gentle by default: advise, suggest, guide, never shame.
+	•	Strict Mode: optional enforcement for Sprint season; user can toggle on/off.
+	•	No redundancy: one feature = one purpose; avoid duplicate surfaces for the same action.
+	•	Every new element must be integrated into Coach, Review, and My Day without adding clutter.
+
+⸻
+
+1) Commitment Budget System (Gentle by default)
+
+1A) Concept
+
+Introduce “Commitment Units” as a private capacity budget.
+	•	Goals, habits, and recurring commitments consume units.
+	•	Weekly budget is adjusted by Season Mode + energy trend.
+	•	The system warns early when overloaded and proposes tradeoffs.
+
+1B) Budget calculation (simple, editable)
+	•	Base budget = 100 units/week (default; editable)
+Season modifiers:
+	•	Recover: 70
+	•	Stabilize: 85
+	•	Build: 100
+	•	Reposition: 90
+	•	Sprint: 110 (but paired with strict safeguards)
+
+Energy trend modifier (last 7 days):
+	•	low energy trend reduces budget by 5–15
+	•	high energy trend increases by 0–10
+
+1C) Unit costs (initial defaults)
+	•	Active goal: 12 units
+	•	Habit (daily): 8
+	•	Habit (3–5x/week): 6
+	•	Habit (1–2x/week): 4
+	•	Keystone habit: +3
+	•	High-friction habit (detected): +2
+	•	Overdue backlog >3: +5 (system load)
+
+Make these tunable in an “Advanced” section.
+
+1D) UX integration
+
+Where to show:
+	•	Coach & Insights: “Capacity” card: Budget used vs available.
+	•	Review: “System Load” section includes capacity.
+	•	My Day: subtle indicator only if overloaded.
+
+When user adds a goal/habit:
+	•	Gentle warning if exceeding budget:
+	•	“This may overload your system. Want to pause something or reduce frequency?”
+	•	show suggested tradeoffs (pause low leverage habits, reduce goal count, switch to Minimum Version)
+	•	Provide one-tap actions (must work):
+	•	Pause habit
+	•	Reduce habit frequency
+	•	Convert to Minimum Version default
+	•	Move goal to “Later” (inactive)
+
+⸻
+
+2) Cognitive Load Meter (Complexity guard)
+
+2A) Compute “Cognitive Load” (Low/Moderate/High)
+
+Inputs:
+	•	active goals count
+	•	active habits count
+	•	overdue tasks count
+	•	number of notifications toggled on
+	•	drift alert frequency (last 7 days)
+	•	friction density (friction events last 7 days)
+
+Output:
+	•	Load level + 1-sentence explanation
+	•	Top 2 drivers (“Overdue tasks + too many active habits”)
+
+2B) UX integration
+
+Coach & Insights:
+	•	“Cognitive Load” card next to Capacity
+	•	“Simplify” button opens a sheet with safe reduction actions:
+	•	Pause items
+	•	Reduce frequency
+	•	Focus Mode toggle
+	•	Turn off low-value notifications (gentle suggestion)
+
+No shaming language.
+
+⸻
+
+3) Weekly Executive Narrative Summary (Strategy layer)
+
+3A) Generate a weekly memo (local)
+
+Each week produce a concise narrative:
+	•	What you protected (top 2 domains + evidence)
+	•	What drifted (top 1–2 drift signals + likely cause)
+	•	What patterns emerged (friction + timing + energy)
+	•	Next week recommendations (3 action buttons)
+
+3B) Placement
+	•	Review tab: “Weekly Memo”
+	•	Coach: summary snippet with “Read memo”
+
+Ensure recommendations are actionable and route correctly.
+
+⸻
+
+4) Anti-Burnout Safeguard v2 (Sustainability circuit)
+
+4A) Detect burnout risk
+
+Triggers (combine signals, avoid noise):
+	•	high momentum + low recovery signals
+	•	stress trend up + energy trend down
+	•	increasing friction + increasing overdue
+	•	repeated overload check-ins
+
+Output:
+	•	Burnout risk: Low / Watch / High
+
+4B) Actions
+
+When Watch/High:
+	•	Recommend switching Season Mode to Recover or Stabilize (one tap)
+	•	Suggest lowering daily task target
+	•	Suggest Minimum Version day defaults
+	•	Suggest Silence Mode (Top 3 + Keystone only)
+All actions must apply changes and persist.
+
+⸻
+
+5) Strict Mode Toggle (Optional; suggested for Sprint)
+
+5A) Behavior
+
+Strict Mode should apply only when toggled ON.
+Default OFF.
+
+When Season = Sprint:
+	•	Coach suggests enabling Strict Mode (non-forcing).
+
+5B) What Strict Mode enforces
+
+Strict Mode rules:
+	•	Hard cap: active goals <= 3 (or user-defined)
+	•	Hard cap: tasks due today <= 5 (or user-defined)
+	•	Requires tradeoff to add new recurring habit/goal
+	•	Overdue cleanup prompt appears daily until overdue <= 3
+	•	Drift alerts become slightly more sensitive (but still capped)
+
+UX:
+	•	Strict Mode toggle in Coach & Insights
+	•	Explain exactly what changes in a tooltip sheet
+	•	Allow “Pause Strict Mode for 24h” (gentle escape hatch)
+
+⸻
+
+6) Anti-Redundancy Guardrail (Internal design constraint)
+
+6A) Is this a good idea?
+
+Yes — implement as an internal audit + consolidation rule, not a user-facing feature.
+
+6B) Implementation requirements
+
+Before adding new UI surfaces:
+	•	Audit existing features for overlap:
+	•	Coach recommendations vs Review intelligence suggestions
+	•	Drift alerts vs Forecast vs Cognitive Load warnings
+	•	Season mode vs Strict mode controls
+	•	Consolidate:
+	•	Use Coach as the main action surface.
+	•	Review as governance layer.
+	•	My Day as execution layer.
+Do NOT duplicate the same action in multiple places unless it has a clear reason.
+
+6C) Deliverable
+
+At the end of implementation, produce an “Anti-redundancy report”:
+	•	list any overlaps found
+	•	what was consolidated/removed
+	•	confirm no duplicated features were introduced
+
+⸻
+
+7) Code audit + QA (do not stop until clean)
+
+7A) Audit
+	•	No dead code
+	•	No dead buttons
+	•	No duplicate close controls
+	•	No console errors
+	•	No state duplication (single source of truth)
+	•	DateKey logic remains correct
+
+7B) Regression tests
+	•	Tasks Today/Overdue correct
+	•	Sunday Reset still works
+	•	Coach actions still work
+	•	Drift + forecast + friction still work
+	•	Identity still editable and proof timeline works
+	•	Notifications remain stable
+	•	Reload persistence passes
+
+End with:
+	1.	Summary of changes
+	2.	Anti-redundancy report
+	3.	Where to test checklist
+	4.	Confirmation: gentle by default, strict only when enabled
