@@ -64,7 +64,7 @@ export default function Home() {
   const [frictionTarget, setFrictionTarget] = useState<{ entityType: 'habit' | 'task'; entityId: string; entityTitle: string } | null>(null);
   const [frictionSelectedTag, setFrictionSelectedTag] = useState<ReasonTag | null>(null);
   const [frictionNote, setFrictionNote] = useState('');
-  const REASON_TAGS: ReasonTag[] = ['Time', 'Energy', 'Environment', 'Emotion', 'Overload', 'Forgetfulness', 'Unclear'];
+  const REASON_TAGS: ReasonTag[] = ['Time', 'Energy', 'Environment', 'Emotion', 'Overload', 'Forgetfulness', 'Unclear', 'Too Large', 'Resistance'];
 
   const frictionFrequency = store.notificationSettings?.frictionPromptFrequency ?? 'normal';
 
@@ -581,10 +581,29 @@ export default function Home() {
                   </button>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold truncate text-foreground/80 tracking-tight">{task.title}</p>
-                    <div className="flex gap-1.5 mt-1">
+                    <div className="flex gap-1.5 mt-1 flex-wrap">
                       {task.domain && <Badge className="text-[7px] bg-primary/5 text-primary border-none font-bold uppercase">{task.domain}</Badge>}
                       <Badge variant="outline" className="text-[7px] border-muted-foreground/20 text-muted-foreground font-bold uppercase">{task.energy} NRG</Badge>
                     </div>
+                    {(task.goalId || task.habitId) && (() => {
+                      const linkedGoal = task.goalId ? goals.find(g => g.id === task.goalId) : null;
+                      const linkedHabit = task.habitId ? habits.find(h => h.id === task.habitId) : null;
+                      if (!linkedGoal && !linkedHabit) return null;
+                      return (
+                        <div className="flex gap-1.5 mt-1 flex-wrap">
+                          {linkedGoal && (
+                            <Badge className="text-[7px] bg-emerald-500/5 text-emerald-600/70 border-none font-medium h-4 px-1.5" data-testid={`badge-goal-home-${task.id}`}>
+                              → Goal: {linkedGoal.title}
+                            </Badge>
+                          )}
+                          {linkedHabit && (
+                            <Badge className="text-[7px] bg-blue-500/5 text-blue-600/70 border-none font-medium h-4 px-1.5" data-testid={`badge-habit-home-${task.id}`}>
+                              → Habit: {linkedHabit.title}
+                            </Badge>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </Card>

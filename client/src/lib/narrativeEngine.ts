@@ -68,6 +68,7 @@ interface NarrativeInput {
   weeklyCheckIns: WeeklyCheckIn[];
   seasonMode: SeasonMode;
   strategicIntent?: string;
+  allDomains?: string[];
 }
 
 function getLast7Dates(): string[] {
@@ -93,7 +94,7 @@ export function generateWeeklyNarrative(input: NarrativeInput): WeeklyNarrative 
   const patterns = computePatterns(frictionEvents, dailyRhythms, completedLogs, last7, last7Set);
   const recommendations = computeRecommendations(protectedItems, driftedItems, patterns, habits, goals, tasks, seasonMode);
   const executiveSummary = computeExecutiveSummary(completedLogs, recentLogs, driftAlerts, frictionEvents, dailyRhythms, last7, habits, tasks, goals, seasonMode, strategicIntent);
-  const domainBalance = computeDomainBalance(completedLogs, habits, tasks, goals);
+  const domainBalance = computeDomainBalance(completedLogs, habits, tasks, goals, input.allDomains);
   const operationalRisks = computeOperationalRisks(driftAlerts, frictionEvents, tasks, habits, dailyRhythms, last7, last7Set);
   const strategicLeverage = computeStrategicLeverage(protectedItems, habits, goals, completedLogs, last7Set);
   const nextWeekFocus = computeNextWeekFocus(driftedItems, operationalRisks, protectedItems, patterns, goals, seasonMode);
@@ -185,8 +186,9 @@ function computeDomainBalance(
   habits: Habit[],
   tasks: Task[],
   goals: Goal[],
+  domainList?: string[],
 ): DomainBalanceEntry[] {
-  const ALL_DOMAINS: string[] = ['Physical', 'Emotional', 'Mental', 'Social', 'Spiritual', 'Career', 'Financial'];
+  const ALL_DOMAINS: string[] = domainList ?? ['Physical', 'Emotional', 'Mental', 'Social', 'Spiritual', 'Career', 'Financial'];
 
   const domainCompletions: Record<string, number> = {};
   const activeDomains = new Set<string>();

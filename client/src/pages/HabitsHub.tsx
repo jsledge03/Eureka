@@ -1,17 +1,19 @@
-import { useState, useMemo } from "react";
-import { Plus, Target, Layers, Trash2, Zap, ArrowRight, X, Pause, Play, Search } from "lucide-react";
+import { useState, useMemo, useCallback } from "react";
+import { Plus, Target, Layers, Trash2, Zap, ArrowRight, X, Pause, Play, Search, Settings2, Eye, EyeOff, GripVertical, Tag, Pencil, Check } from "lucide-react";
 import { useDebounce } from "@/lib/useDebounce";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useStore, Habit, DOMAINS, Domain } from "@/store/useStore";
+import { useStore, Habit, DEFAULT_DOMAINS, Domain, DEFAULT_HABITS_HUB_SECTIONS } from "@/store/useStore";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { 
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter 
 } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { hapticLight, hapticMedium, hapticSuccess, hapticWarning } from "@/lib/haptics";
@@ -24,14 +26,21 @@ import { HeatMap } from "@/components/HeatMap";
 import { Lightbulb, ChevronDown, ChevronUp, Sparkles, Calendar } from "lucide-react";
 
 export default function HabitsHub() {
-  const { goals, habits, identities, addHabit, updateHabit, deleteHabit, logs, tasks, dailyRhythms } = useStore();
+  const { goals, habits, identities, addHabit, updateHabit, deleteHabit, logs, tasks, dailyRhythms, habitsHubSections, toggleSectionVisibility, moveSection, customDomains, addCustomDomain, removeCustomDomain, renameCustomDomain, getAllDomains } = useStore();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [activeHabitId, setActiveHabitId] = useState<string | null>(null);
+  const [isLayoutSettingsOpen, setIsLayoutSettingsOpen] = useState(false);
+  const [isDomainManagerOpen, setIsDomainManagerOpen] = useState(false);
+  const [newDomainName, setNewDomainName] = useState('');
+  const [renamingDomain, setRenamingDomain] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState('');
+  const [deletingDomain, setDeletingDomain] = useState<string | null>(null);
   
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [habitToDelete, setHabitToDelete] = useState<string | null>(null);
   const [showHighLeverageOnly, setShowHighLeverageOnly] = useState(false);
   const [domainFilter, setDomainFilter] = useState<Domain | 'all'>('all');
+  const allDomains = useMemo(() => [...DEFAULT_DOMAINS, ...customDomains], [customDomains]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showRecommendations, setShowRecommendations] = useState(true);
   const [showHeatMap, setShowHeatMap] = useState(true);
@@ -63,6 +72,27 @@ export default function HabitsHub() {
   }, [logs]);
 
   const heatMapData = useMemo(() => computeHabitHeatMap(habits, logs, 90), [habits, logs]);
+
+  const orderedSections = useMemo(() => {
+    if (habitsHubSections.length === 0) return DEFAULT_HABITS_HUB_SECTIONS;
+    const missing = DEFAULT_HABITS_HUB_SECTIONS.filter(d => !habitsHubSections.some(s => s.id === d.id));
+    return missing.length > 0 ? [...habitsHubSections, ...missing] : habitsHubSections;
+  }, [habitsHubSections]);
+  const isSectionVisible = useCallback((id: string) => {
+    const s = orderedSections.find(s => s.id === id);
+    return s ? s.visible : true;
+  }, [orderedSections]);
+  const sectionOrder = useCallback((id: string) => {
+    const idx = orderedSections.findIndex(s => s.id === id);
+    return idx >= 0 ? idx : 99;
+  }, [orderedSections]);
+
+  const SECTION_LABELS: Record<string, string> = {
+    'search-filters': 'Search & Filters',
+    'heat-map': 'Consistency Heat Map',
+    'recommendations': 'Suggested for You',
+    'habit-list': 'Habit List',
+  };
 
   const adoptRecommendation = (rec: HabitRecommendation) => {
     setFormData({
@@ -198,129 +228,410 @@ export default function HabitsHub() {
           <h1 className="text-3xl font-serif text-primary mt-1">Habits Hub</h1>
         </div>
         <div className="flex items-center gap-2 pt-1">
+          <Button variant="ghost" size="icon" className="rounded-full h-11 w-11 min-h-[44px] min-w-[44px] text-muted-foreground" onClick={() => { setIsDomainManagerOpen(true); hapticLight(); }} data-testid="button-manage-domains">
+            <Tag size={18} />
+          </Button>
+          <Button variant="ghost" size="icon" className="rounded-full h-11 w-11 min-h-[44px] min-w-[44px] text-muted-foreground" onClick={() => { setIsLayoutSettingsOpen(true); hapticLight(); }} data-testid="button-habits-hub-layout">
+            <Settings2 size={18} />
+          </Button>
           <Button onClick={() => { setFormData(emptyForm); setActiveHabitId(null); setIsFormOpen(true); }} size="icon" className="rounded-full bg-primary h-11 w-11 min-h-[44px] min-w-[44px] shadow-md shrink-0" data-testid="button-add-habit">
             <Plus size={22} />
           </Button>
         </div>
       </header>
 
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
-          <Input
-            data-testid="input-search-habits"
-            placeholder="Search habits..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="h-10 pl-9 bg-muted/30 border-none rounded-xl text-sm"
-          />
-        </div>
-        <Select value={domainFilter} onValueChange={(val: any) => setDomainFilter(val)}>
-          <SelectTrigger className="w-auto min-w-[100px] h-10 rounded-xl bg-muted/30 border-none text-[10px] font-bold uppercase shrink-0" data-testid="select-domain-filter">
-            <SelectValue placeholder="All" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Domains</SelectItem>
-            {DOMAINS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        {highLeverageCount > 0 && (
-          <Button
-            variant={showHighLeverageOnly ? "default" : "outline"}
-            size="sm"
-            onClick={() => setShowHighLeverageOnly(!showHighLeverageOnly)}
-            className={cn("rounded-full text-[10px] font-bold uppercase px-3 h-10 shrink-0", showHighLeverageOnly && "bg-emerald-600 hover:bg-emerald-700")}
-            data-testid="button-high-leverage-filter"
-          >
-            ⬆ {highLeverageCount}
-          </Button>
-        )}
-      </div>
-
-      {habits.length > 0 && (
-        <div className="space-y-3">
-          <button
-            onClick={() => { setShowHeatMap(!showHeatMap); hapticLight(); }}
-            className="flex items-center gap-2 w-full text-left"
-            data-testid="button-toggle-heatmap"
-          >
-            <div className="flex items-center gap-2 flex-1">
-              <div className="h-7 w-7 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                <Calendar size={14} className="text-emerald-600" />
+      <Sheet open={isLayoutSettingsOpen} onOpenChange={setIsLayoutSettingsOpen}>
+        <SheetContent side="bottom" className="rounded-t-3xl max-h-[70vh] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="font-serif text-lg">Habits Hub Layout</SheetTitle>
+          </SheetHeader>
+          <div className="space-y-1 mt-4">
+            {orderedSections.map((section) => (
+              <div key={section.id} className="flex items-center gap-2 p-3 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors" data-testid={`layout-section-${section.id}`}>
+                <div className="flex flex-col gap-0.5">
+                  <button onClick={() => { moveSection('habitsHub', section.id, 'up'); hapticLight(); }} className="text-muted-foreground/40 hover:text-muted-foreground p-0.5" data-testid={`button-move-up-${section.id}`}>
+                    <ChevronUp size={12} />
+                  </button>
+                  <button onClick={() => { moveSection('habitsHub', section.id, 'down'); hapticLight(); }} className="text-muted-foreground/40 hover:text-muted-foreground p-0.5" data-testid={`button-move-down-${section.id}`}>
+                    <ChevronDown size={12} />
+                  </button>
+                </div>
+                <GripVertical size={14} className="text-muted-foreground/30" />
+                <span className="flex-1 text-sm font-medium">{SECTION_LABELS[section.id] || section.id}</span>
+                <button onClick={() => { toggleSectionVisibility('habitsHub', section.id); hapticLight(); }} className="p-1.5" data-testid={`button-toggle-visibility-${section.id}`}>
+                  {section.visible ? <Eye size={16} className="text-primary" /> : <EyeOff size={16} className="text-muted-foreground/40" />}
+                </button>
               </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Consistency</span>
-            </div>
-            {showHeatMap ? <ChevronUp size={14} className="text-muted-foreground/50" /> : <ChevronDown size={14} className="text-muted-foreground/50" />}
-          </button>
-          {showHeatMap && (
-            <Card className="bg-card border-none shadow-sm rounded-2xl p-4 ring-1 ring-border/20">
-              <HeatMap data={heatMapData} />
-            </Card>
-          )}
-        </div>
-      )}
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      {recommendations.length > 0 && (
-        <div className="space-y-3">
-          <button
-            onClick={() => { setShowRecommendations(!showRecommendations); hapticLight(); }}
-            className="flex items-center gap-2 w-full text-left"
-            data-testid="button-toggle-recommendations"
-          >
-            <div className="flex items-center gap-2 flex-1">
-              <div className="h-7 w-7 rounded-full bg-amber-500/10 flex items-center justify-center">
-                <Lightbulb size={14} className="text-amber-600" />
-              </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Suggested for You</span>
-              <Badge className="text-[8px] h-4 px-1.5 bg-amber-500/10 text-amber-600 border-none font-bold">{recommendations.length}</Badge>
-            </div>
-            {showRecommendations ? <ChevronUp size={14} className="text-muted-foreground/50" /> : <ChevronDown size={14} className="text-muted-foreground/50" />}
-          </button>
-          {showRecommendations && (
-            <div className="space-y-2">
-              {recommendations.map(rec => (
-                <Card key={rec.id} className="bg-card border-none shadow-sm rounded-2xl overflow-hidden" data-testid={`card-rec-${rec.id}`}>
-                  <div className="p-4 space-y-2">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <Sparkles size={12} className="text-amber-500" />
-                          <h4 className="font-bold text-sm text-foreground">{rec.title}</h4>
-                          <Badge className="text-[8px] h-3.5 px-1.5 bg-primary/10 text-primary border-none font-bold uppercase">{rec.domain}</Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground font-medium">{rec.why}</p>
-                        <p className="text-[10px] text-amber-600/80 font-medium">{rec.reason}</p>
-                        {rec.goalTitle && (
-                          <p className="text-[10px] text-primary/60 font-medium flex items-center gap-1">
-                            <Target size={9} /> {rec.goalTitle}
-                          </p>
+      <Sheet open={isDomainManagerOpen} onOpenChange={setIsDomainManagerOpen}>
+        <SheetContent side="bottom" className="rounded-t-[2rem] max-h-[85vh] overflow-y-auto overscroll-contain pb-8" onOpenAutoFocus={(e) => e.preventDefault()}>
+          <SheetHeader className="pb-4">
+            <SheetTitle className="font-serif text-xl text-primary flex items-center gap-2">
+              <Tag size={18} className="text-primary" /> Manage Domains
+            </SheetTitle>
+          </SheetHeader>
+          <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+            Create, rename, or remove custom domains. Changes apply across habits, tasks, and goals.
+          </p>
+
+          <div className="flex gap-2 mb-4">
+            <Input
+              data-testid="input-new-domain"
+              placeholder="New domain name"
+              value={newDomainName}
+              onChange={e => setNewDomainName(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && newDomainName.trim()) {
+                  if (allDomains.includes(newDomainName.trim())) {
+                    toast.error("Domain already exists");
+                    return;
+                  }
+                  addCustomDomain(newDomainName.trim());
+                  setNewDomainName("");
+                  hapticSuccess();
+                  toast.success("Domain created");
+                }
+              }}
+              className="h-11 bg-muted/30 border-none rounded-xl text-sm flex-1"
+            />
+            <Button
+              size="sm"
+              className="h-11 px-4 rounded-xl bg-primary"
+              data-testid="button-create-domain"
+              onClick={() => {
+                if (!newDomainName.trim()) return;
+                if (allDomains.includes(newDomainName.trim())) {
+                  toast.error("Domain already exists");
+                  return;
+                }
+                addCustomDomain(newDomainName.trim());
+                setNewDomainName("");
+                hapticSuccess();
+                toast.success("Domain created");
+              }}
+            >
+              <Plus size={16} />
+            </Button>
+          </div>
+
+          <div className="space-y-1.5">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Default Domains</p>
+            {DEFAULT_DOMAINS.map(d => {
+              const habitCount = habits.filter(h => h.domain === d).length;
+              return (
+                <div key={d} className="flex items-center gap-2 p-3 rounded-xl ring-1 ring-border/20 bg-card opacity-70" data-testid={`domain-default-${d}`}>
+                  <span className="text-xs font-bold text-foreground flex-1 min-w-0 truncate">{d}</span>
+                  <span className="text-[9px] text-muted-foreground/60 shrink-0">{habitCount} {habitCount === 1 ? 'habit' : 'habits'}</span>
+                </div>
+              );
+            })}
+
+            {customDomains.length > 0 && (
+              <>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-2 mt-4">Custom Domains</p>
+                {customDomains.map(d => {
+                  const habitCount = habits.filter(h => h.domain === d).length;
+                  const isRenaming = renamingDomain === d;
+                  return (
+                    <div key={d} className="flex items-center gap-2 p-3 rounded-xl ring-1 ring-border/20 bg-card" data-testid={`domain-custom-${d}`}>
+                      {isRenaming ? (
+                        <Input
+                          value={renameValue}
+                          onChange={e => setRenameValue(e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter' && renameValue.trim() && renameValue.trim() !== d) {
+                              if (allDomains.includes(renameValue.trim())) {
+                                toast.error("Domain already exists");
+                                return;
+                              }
+                              renameCustomDomain(d, renameValue.trim());
+                              setRenamingDomain(null);
+                              hapticSuccess();
+                              toast.success("Domain renamed");
+                            } else if (e.key === 'Escape') {
+                              setRenamingDomain(null);
+                            }
+                          }}
+                          autoFocus
+                          className="h-8 text-xs bg-muted/30 border-none rounded-lg flex-1"
+                          data-testid={`input-rename-domain-${d}`}
+                        />
+                      ) : (
+                        <span className="text-xs font-bold text-foreground flex-1 min-w-0 truncate">{d}</span>
+                      )}
+                      <span className="text-[9px] text-muted-foreground/60 shrink-0">{habitCount} {habitCount === 1 ? 'habit' : 'habits'}</span>
+                      <div className="flex items-center gap-1 shrink-0">
+                        {isRenaming ? (
+                          <>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0"
+                              onClick={() => {
+                                if (renameValue.trim() && renameValue.trim() !== d) {
+                                  if (allDomains.includes(renameValue.trim())) {
+                                    toast.error("Domain already exists");
+                                    return;
+                                  }
+                                  renameCustomDomain(d, renameValue.trim());
+                                  hapticSuccess();
+                                  toast.success("Domain renamed");
+                                }
+                                setRenamingDomain(null);
+                              }}
+                              data-testid={`button-confirm-rename-domain-${d}`}
+                            >
+                              <Check size={14} className="text-primary" />
+                            </Button>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setRenamingDomain(null)} data-testid={`button-cancel-rename-domain-${d}`}>
+                              <X size={14} />
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0"
+                              onClick={() => { setRenamingDomain(d); setRenameValue(d); }}
+                              data-testid={`button-rename-domain-${d}`}
+                            >
+                              <Pencil size={12} className="text-muted-foreground" />
+                            </Button>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0"
+                              onClick={() => setDeletingDomain(d)}
+                              data-testid={`button-delete-domain-${d}`}
+                            >
+                              <Trash2 size={12} className="text-muted-foreground hover:text-destructive" />
+                            </Button>
+                          </>
                         )}
                       </div>
-                      <button
-                        onClick={() => dismissRecommendation(rec.id)}
-                        className="text-muted-foreground/30 hover:text-muted-foreground p-1"
-                        data-testid={`button-dismiss-rec-${rec.id}`}
-                      >
-                        <X size={14} />
-                      </button>
                     </div>
-                    <div className="flex gap-2 pt-1">
-                      <Button
-                        size="sm"
-                        onClick={() => adoptRecommendation(rec)}
-                        className="rounded-full text-[10px] font-bold uppercase tracking-wider h-8 px-4 bg-primary"
-                        data-testid={`button-adopt-rec-${rec.id}`}
-                      >
-                        <Plus size={12} className="mr-1" /> Add This Habit
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
+                  );
+                })}
+              </>
+            )}
+          </div>
+
+          <Button variant="outline" className="w-full h-11 rounded-2xl mt-4 text-xs font-bold"
+            onClick={() => setIsDomainManagerOpen(false)} data-testid="button-close-domain-manager"
+          >
+            Done
+          </Button>
+        </SheetContent>
+      </Sheet>
+
+      <AlertDialog open={!!deletingDomain} onOpenChange={(open) => { if (!open) setDeletingDomain(null); }}>
+        <AlertDialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove "{deletingDomain}"?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {(() => {
+                const count = habits.filter(h => h.domain === deletingDomain).length + tasks.filter(t => t.domain === deletingDomain).length + goals.filter(g => g.domain === deletingDomain).length;
+                return count > 0
+                  ? `This domain is used on ${count} item(s). It will be removed from all of them.`
+                  : "No items are using this domain. It will be removed from your domain list.";
+              })()}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl min-h-[44px]">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-xl min-h-[44px] bg-destructive hover:bg-destructive/90"
+              onClick={() => {
+                if (deletingDomain) {
+                  removeCustomDomain(deletingDomain);
+                  hapticWarning();
+                  toast.success(`"${deletingDomain}" removed`);
+                  setDeletingDomain(null);
+                }
+              }}
+              data-testid="button-confirm-delete-domain"
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <div className="flex flex-col" style={{ display: 'flex', flexDirection: 'column' }}>
+      {[
+        { id: 'search-filters', content: (
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
+              <Input
+                data-testid="input-search-habits"
+                placeholder="Search habits..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="h-10 pl-9 bg-muted/30 border-none rounded-xl text-sm"
+              />
             </div>
-          )}
-        </div>
-      )}
+            <Select value={domainFilter} onValueChange={(val: any) => setDomainFilter(val)}>
+              <SelectTrigger className="w-auto min-w-[100px] h-10 rounded-xl bg-muted/30 border-none text-[10px] font-bold uppercase shrink-0" data-testid="select-domain-filter">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Domains</SelectItem>
+                {allDomains.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            {highLeverageCount > 0 && (
+              <Button
+                variant={showHighLeverageOnly ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowHighLeverageOnly(!showHighLeverageOnly)}
+                className={cn("rounded-full text-[10px] font-bold uppercase px-3 h-10 shrink-0", showHighLeverageOnly && "bg-emerald-600 hover:bg-emerald-700")}
+                data-testid="button-high-leverage-filter"
+              >
+                ⬆ {highLeverageCount}
+              </Button>
+            )}
+          </div>
+        )},
+        { id: 'heat-map', content: habits.length > 0 ? (
+          <div className="space-y-3">
+            <button
+              onClick={() => { setShowHeatMap(!showHeatMap); hapticLight(); }}
+              className="flex items-center gap-2 w-full text-left"
+              data-testid="button-toggle-heatmap"
+            >
+              <div className="flex items-center gap-2 flex-1">
+                <div className="h-7 w-7 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                  <Calendar size={14} className="text-emerald-600" />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Consistency</span>
+              </div>
+              {showHeatMap ? <ChevronUp size={14} className="text-muted-foreground/50" /> : <ChevronDown size={14} className="text-muted-foreground/50" />}
+            </button>
+            {showHeatMap && (
+              <Card className="bg-card border-none shadow-sm rounded-2xl p-4 ring-1 ring-border/20">
+                <HeatMap data={heatMapData} />
+              </Card>
+            )}
+          </div>
+        ) : null},
+        { id: 'recommendations', content: recommendations.length > 0 ? (
+          <div className="space-y-3">
+            <button
+              onClick={() => { setShowRecommendations(!showRecommendations); hapticLight(); }}
+              className="flex items-center gap-2 w-full text-left"
+              data-testid="button-toggle-recommendations"
+            >
+              <div className="flex items-center gap-2 flex-1">
+                <div className="h-7 w-7 rounded-full bg-amber-500/10 flex items-center justify-center">
+                  <Lightbulb size={14} className="text-amber-600" />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Suggested for You</span>
+                <Badge className="text-[8px] h-4 px-1.5 bg-amber-500/10 text-amber-600 border-none font-bold">{recommendations.length}</Badge>
+              </div>
+              {showRecommendations ? <ChevronUp size={14} className="text-muted-foreground/50" /> : <ChevronDown size={14} className="text-muted-foreground/50" />}
+            </button>
+            {showRecommendations && (
+              <div className="space-y-2">
+                {recommendations.map(rec => (
+                  <Card key={rec.id} className="bg-card border-none shadow-sm rounded-2xl overflow-hidden" data-testid={`card-rec-${rec.id}`}>
+                    <div className="p-4 space-y-2">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Sparkles size={12} className="text-amber-500" />
+                            <h4 className="font-bold text-sm text-foreground">{rec.title}</h4>
+                            <Badge className="text-[8px] h-3.5 px-1.5 bg-primary/10 text-primary border-none font-bold uppercase">{rec.domain}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground font-medium">{rec.why}</p>
+                          <p className="text-[10px] text-amber-600/80 font-medium">{rec.reason}</p>
+                          {rec.goalTitle && (
+                            <p className="text-[10px] text-primary/60 font-medium flex items-center gap-1">
+                              <Target size={9} /> {rec.goalTitle}
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => dismissRecommendation(rec.id)}
+                          className="text-muted-foreground/30 hover:text-muted-foreground p-1"
+                          data-testid={`button-dismiss-rec-${rec.id}`}
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                      <div className="flex gap-2 pt-1">
+                        <Button
+                          size="sm"
+                          onClick={() => adoptRecommendation(rec)}
+                          className="rounded-full text-[10px] font-bold uppercase tracking-wider h-8 px-4 bg-primary"
+                          data-testid={`button-adopt-rec-${rec.id}`}
+                        >
+                          <Plus size={12} className="mr-1" /> Add This Habit
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : null},
+        { id: 'habit-list', content: (
+          <div className="space-y-8 pt-4">
+            {groupedHabits.map(goal => (
+              <div key={goal.id} className="space-y-4">
+                <h2 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2 border-b border-border/50 pb-2">
+                  <Target size={14} className="text-primary opacity-50" /> {goal.title}
+                  {goal.identityId && (() => {
+                    const linked = identities.find(i => i.id === goal.identityId);
+                    if (!linked) return null;
+                    const preview = linked.statement.length > 20 ? linked.statement.slice(0, 20) + '…' : linked.statement;
+                    return <span className="text-[9px] font-medium text-primary/60 normal-case tracking-normal ml-auto" data-testid={`text-identity-link-${goal.id}`}>↗ {preview}</span>;
+                  })()}
+                </h2>
+                {goal.linkedHabits.length === 0 ? (
+                  <p className="text-xs text-muted-foreground italic pl-6 opacity-60">No active habits yet.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {goal.linkedHabits.map(habit => (
+                      <HabitCard key={habit.id} habit={habit} gravityScores={gravityScores} habitStreaks={habitStreaks} habitLogMap={habitLogMap} onEdit={() => startEdit(habit)} onDelete={() => confirmDelete(habit.id)} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {unlinkedHabits.length > 0 && (
+              <div className="space-y-4 pt-4">
+                <h2 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2 border-b border-border/50 pb-2">
+                  <Layers size={14} className="text-secondary opacity-50" /> Unlinked
+                </h2>
+                <div className="space-y-3">
+                  {unlinkedHabits.map(habit => (
+                    <HabitCard key={habit.id} habit={habit} gravityScores={gravityScores} habitStreaks={habitStreaks} habitLogMap={habitLogMap} onEdit={() => startEdit(habit)} onDelete={() => confirmDelete(habit.id)} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {pausedHabitsList.length > 0 && (
+              <div className="space-y-4 pt-6 border-t border-dashed">
+                <h2 className="text-[11px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em] flex items-center gap-2 pb-2">
+                  <Pause size={14} /> Paused Seasons
+                </h2>
+                <div className="space-y-3">
+                  {pausedHabitsList.map(habit => (
+                    <HabitCard key={habit.id} habit={habit} gravityScores={gravityScores} habitStreaks={habitStreaks} habitLogMap={habitLogMap} onEdit={() => startEdit(habit)} onDelete={() => confirmDelete(habit.id)} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )},
+      ]
+        .sort((a, b) => sectionOrder(a.id) - sectionOrder(b.id))
+        .map(section => isSectionVisible(section.id) && section.content ? (
+          <div key={section.id} style={{ order: sectionOrder(section.id) }}>
+            {section.content}
+          </div>
+        ) : null)}
+      </div>
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="max-h-[85vh] overflow-y-auto" aria-describedby={undefined} onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -369,7 +680,7 @@ export default function HabitsHub() {
                   <SelectTrigger className="h-11 bg-muted/30 border-none rounded-xl"><SelectValue placeholder="No Domain" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">No Domain</SelectItem>
-                    {DOMAINS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                    {allDomains.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -453,56 +764,6 @@ export default function HabitsHub() {
         </DialogContent>
       </Dialog>
 
-      <div className="space-y-8 pt-4">
-        {groupedHabits.map(goal => (
-          <div key={goal.id} className="space-y-4">
-            <h2 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2 border-b border-border/50 pb-2">
-              <Target size={14} className="text-primary opacity-50" /> {goal.title}
-              {goal.identityId && (() => {
-                const linked = identities.find(i => i.id === goal.identityId);
-                if (!linked) return null;
-                const preview = linked.statement.length > 20 ? linked.statement.slice(0, 20) + '…' : linked.statement;
-                return <span className="text-[9px] font-medium text-primary/60 normal-case tracking-normal ml-auto" data-testid={`text-identity-link-${goal.id}`}>↗ {preview}</span>;
-              })()}
-            </h2>
-            {goal.linkedHabits.length === 0 ? (
-              <p className="text-xs text-muted-foreground italic pl-6 opacity-60">No active habits yet.</p>
-            ) : (
-              <div className="space-y-3">
-                {goal.linkedHabits.map(habit => (
-                  <HabitCard key={habit.id} habit={habit} gravityScores={gravityScores} habitStreaks={habitStreaks} habitLogMap={habitLogMap} onEdit={() => startEdit(habit)} onDelete={() => confirmDelete(habit.id)} />
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-
-        {unlinkedHabits.length > 0 && (
-          <div className="space-y-4 pt-4">
-            <h2 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2 border-b border-border/50 pb-2">
-              <Layers size={14} className="text-secondary opacity-50" /> Unlinked
-            </h2>
-            <div className="space-y-3">
-              {unlinkedHabits.map(habit => (
-                <HabitCard key={habit.id} habit={habit} gravityScores={gravityScores} habitStreaks={habitStreaks} habitLogMap={habitLogMap} onEdit={() => startEdit(habit)} onDelete={() => confirmDelete(habit.id)} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {pausedHabitsList.length > 0 && (
-          <div className="space-y-4 pt-6 border-t border-dashed">
-            <h2 className="text-[11px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em] flex items-center gap-2 pb-2">
-              <Pause size={14} /> Paused Seasons
-            </h2>
-            <div className="space-y-3">
-              {pausedHabitsList.map(habit => (
-                <HabitCard key={habit.id} habit={habit} gravityScores={gravityScores} habitStreaks={habitStreaks} habitLogMap={habitLogMap} onEdit={() => startEdit(habit)} onDelete={() => confirmDelete(habit.id)} />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }

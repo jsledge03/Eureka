@@ -3,7 +3,7 @@ import { Plus, Target, Trash2, Edit2, Pause, Star, ChevronDown, ChevronUp, Trend
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useStore, Goal, Identity as IdentityType, DOMAINS, Domain } from "@/store/useStore";
+import { useStore, Goal, Identity as IdentityType, DEFAULT_DOMAINS, Domain } from "@/store/useStore";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -22,8 +22,9 @@ import { computeCommitmentBudget, computeCommitmentUsage, isOverloaded, getOverl
 
 export default function Identity() {
   const store = useStore();
-  const { identities, goals, habits, tasks, logs, dailyRhythms, quarterPlans, currentQuarterKey, seasonMode } = store;
+  const { identities, goals, habits, tasks, logs, dailyRhythms, quarterPlans, currentQuarterKey, seasonMode, getAllDomains } = store;
   const { addIdentity, updateIdentity, deleteIdentity, setActiveIdentity, toggleIdentityActive, addGoal, updateGoal, deleteGoal, addTask, updateHabit } = store;
+  const allDomains = getAllDomains();
   const [, setLocation] = useLocation();
 
   const activeIdentities = identities.filter(i => i.isActive);
@@ -239,7 +240,10 @@ export default function Identity() {
             <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Active Identities</h2>
             <Badge className="bg-primary/10 text-primary border-none text-[8px]">{activeIdentities.length}</Badge>
           </div>
-          {activeIdentities.map(identity => (
+          {activeIdentities.map(identity => {
+            const allValues = identity.values;
+            const allCommitments = identity.characterCommitments || [];
+            return (
             <Card key={identity.id} className="p-5 space-y-4 transition-all" data-testid={`card-active-identity-${identity.id}`}>
               <div className="flex items-center gap-2 mb-1">
                 <Star size={12} className="text-primary fill-primary" />
@@ -252,11 +256,48 @@ export default function Identity() {
               {identity.refuseStatement && (
                 <p className="text-xs text-muted-foreground italic" data-testid={`text-refuse-statement-${identity.id}`}>I refuse to become: {identity.refuseStatement}</p>
               )}
-              {identity.values.length > 0 && (
-                <div className="flex flex-wrap gap-1.5" data-testid={`values-chips-${identity.id}`}>
-                  {identity.values.map(v => (
-                    <Badge key={v} className="bg-primary/10 text-primary border-none text-[9px] font-bold uppercase px-2 py-1">{v}</Badge>
-                  ))}
+              {allValues.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Values</p>
+                  <div className="flex flex-wrap gap-1.5" data-testid={`values-chips-${identity.id}`}>
+                    {allValues.map(v => (
+                      <Badge key={v} className="bg-primary/10 text-primary border-none text-[9px] font-bold uppercase px-2 py-1">{v}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {allCommitments.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Commitments</p>
+                  <div className="space-y-1.5">
+                    {allCommitments.map((c, i) => (
+                      <div key={i} className="flex items-start gap-2 text-xs text-foreground">
+                        <Shield size={11} className="text-primary mt-0.5 shrink-0" />
+                        <span>{c}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {identity.domainEmphasis && Object.values(identity.domainEmphasis).some(v => v > 0) && (
+                <div className="space-y-1.5">
+                  <button onClick={() => toggleDomainExpanded(identity.id)} className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1">
+                    {expandedDomains.has(identity.id) ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+                    Domain Emphasis
+                  </button>
+                  {expandedDomains.has(identity.id) && (
+                    <div className="space-y-2 pt-1">
+                      {allDomains.filter(d => (identity.domainEmphasis?.[d] || 0) > 0).map(d => (
+                        <div key={d} className="flex items-center gap-3">
+                          <span className="text-[10px] text-muted-foreground w-16 shrink-0">{d}</span>
+                          <div className="flex-1 bg-muted/30 rounded-full h-1.5 overflow-hidden">
+                            <div className="h-full bg-primary/40 rounded-full transition-all duration-500" style={{ width: `${((identity.domainEmphasis?.[d] || 0) / 3) * 100}%` }} />
+                          </div>
+                          <span className="text-[10px] text-muted-foreground w-4">{identity.domainEmphasis?.[d] || 0}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
               <div className="flex flex-wrap gap-2 pt-1">
@@ -265,7 +306,8 @@ export default function Identity() {
                 </Button>
               </div>
             </Card>
-          ))}
+            );
+          })}
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => setIsDriftOpen(true)} className="text-[10px] flex-1 rounded-xl min-h-[44px]" data-testid="button-view-drift">
               <AlertTriangle size={12} className="mr-1.5" /> Drift {driftLevel !== 'Low' && <Badge className={cn("ml-1 text-[8px] py-0 px-1.5", driftLevel === 'High' ? "bg-destructive/10 text-destructive" : "bg-amber-500/10 text-amber-600")}>{driftLevel}</Badge>}
@@ -401,69 +443,6 @@ export default function Identity() {
         )}
       </section>
 
-      {activeIdentities.length > 0 && (
-        <section className="space-y-3" data-testid="section-commitments">
-          <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1">Identity Commitments</h2>
-          {activeIdentities.map(identity => {
-            const allValues = identity.values;
-            const allCommitments = identity.characterCommitments || [];
-            const hasContent = allValues.length > 0 || allCommitments.length > 0;
-            return (
-              <Card key={identity.id} className="p-5 space-y-4">
-                {activeIdentities.length > 1 && (
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-primary">{identity.statement}</p>
-                )}
-                {allValues.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Values</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {allValues.map(v => (
-                        <Badge key={v} className="bg-primary/10 text-primary border-none text-[9px] font-bold uppercase px-2.5 py-1">{v}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {allCommitments.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Character Commitments</p>
-                    <div className="space-y-2">
-                      {allCommitments.map((c, i) => (
-                        <div key={i} className="flex items-start gap-2.5 text-sm text-foreground">
-                          <Shield size={12} className="text-primary mt-0.5 shrink-0" />
-                          <span>{c}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <Button variant="ghost" size="sm" onClick={() => toggleDomainExpanded(identity.id)} className="text-[10px] text-muted-foreground w-full min-h-[44px] rounded-xl" data-testid={`button-toggle-advanced-${identity.id}`}>
-                  {expandedDomains.has(identity.id) ? <ChevronUp size={12} className="mr-1" /> : <ChevronDown size={12} className="mr-1" />}
-                  {expandedDomains.has(identity.id) ? 'Hide' : 'Show'} Domain Emphasis
-                </Button>
-                {expandedDomains.has(identity.id) && identity.domainEmphasis && (
-                  <div className="space-y-3 pt-2">
-                    {DOMAINS.map(d => (
-                      <div key={d} className="flex items-center gap-3">
-                        <span className="text-[10px] text-muted-foreground w-16 shrink-0">{d}</span>
-                        <div className="flex-1 bg-muted/30 rounded-full h-2 overflow-hidden">
-                          <div className="h-full bg-primary/40 rounded-full transition-all duration-500" style={{ width: `${((identity.domainEmphasis?.[d] || 0) / 3) * 100}%` }} />
-                        </div>
-                        <span className="text-[10px] text-muted-foreground w-4">{identity.domainEmphasis?.[d] || 0}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {!hasContent && (
-                  <div className="text-center py-4">
-                    <p className="text-sm text-muted-foreground">Add values and commitments to give your identity depth.</p>
-                    <Button variant="outline" size="sm" onClick={() => openIdentityForm(identity)} className="mt-3 text-[10px] rounded-xl min-h-[44px]" data-testid={`button-edit-commitments-${identity.id}`}>Edit Identity</Button>
-                  </div>
-                )}
-              </Card>
-            );
-          })}
-        </section>
-      )}
 
       <section className="space-y-4" data-testid="section-goals">
         <div className="flex items-center justify-between ml-1">
@@ -536,7 +515,7 @@ export default function Identity() {
             {showFormAdvanced && (
               <div className="space-y-4 p-4 bg-muted/20 rounded-2xl">
                 <p className="text-xs text-muted-foreground">Weight each domain (0 = not part of this identity, 3 = central)</p>
-                {DOMAINS.map(d => (
+                {allDomains.map(d => (
                   <div key={d} className="space-y-1">
                     <div className="flex justify-between">
                       <label className="text-sm text-foreground">{d}</label>
@@ -672,7 +651,7 @@ export default function Identity() {
                 <label className="text-xs font-bold uppercase text-muted-foreground ml-1">Domain</label>
                 <Select value={goalForm.domain} onValueChange={(v: any) => setGoalForm({ ...goalForm, domain: v })}>
                   <SelectTrigger className="bg-muted/30 border-none rounded-xl h-11"><SelectValue placeholder="None" /></SelectTrigger>
-                  <SelectContent><SelectItem value="none">None</SelectItem>{DOMAINS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
+                  <SelectContent><SelectItem value="none">None</SelectItem>{allDomains.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
             </div>

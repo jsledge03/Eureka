@@ -7,7 +7,7 @@ export interface FrictionInsights {
 }
 
 export interface FrictionSuggestion {
-  type: 'reschedule' | 'add-cue' | 'minimum-version' | 'reduce-frequency' | 'create-supporting-task';
+  type: 'reschedule' | 'add-cue' | 'minimum-version' | 'reduce-frequency' | 'create-supporting-task' | 'break-down' | 'explore-resistance';
   entityId: string;
   entityTitle: string;
   message: string;
@@ -108,6 +108,24 @@ export function computeFrictionInsights(
         entityId: entity.entityId,
         entityTitle: entity.entityTitle,
         message: `Create a supporting task to remove blockers for "${entity.entityTitle}"`,
+      });
+    }
+
+    if (reasons.includes('Too Large')) {
+      suggestions.push({
+        type: 'break-down',
+        entityId: entity.entityId,
+        entityTitle: entity.entityTitle,
+        message: `Break "${entity.entityTitle}" into smaller, more manageable steps`,
+      });
+    }
+
+    if (reasons.includes('Resistance')) {
+      suggestions.push({
+        type: 'explore-resistance',
+        entityId: entity.entityId,
+        entityTitle: entity.entityTitle,
+        message: `Explore what's behind the resistance to "${entity.entityTitle}" — is it aligned with your identity?`,
       });
     }
   }

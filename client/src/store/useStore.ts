@@ -5,8 +5,9 @@ import { type SeasonMode, getSeasonDefaults } from '@/lib/seasonEngine';
 import { generateProofEvent } from '@/lib/proofEngine';
 export type { SeasonMode } from '@/lib/seasonEngine';
 
-export type Domain = 'Physical' | 'Emotional' | 'Mental' | 'Social' | 'Spiritual' | 'Career' | 'Financial';
-export const DOMAINS: Domain[] = ['Physical', 'Emotional', 'Mental', 'Social', 'Spiritual', 'Career', 'Financial'];
+export type Domain = string;
+export const DEFAULT_DOMAINS: string[] = ['Physical', 'Emotional', 'Mental', 'Social', 'Spiritual', 'Career', 'Financial'];
+export const DOMAINS = DEFAULT_DOMAINS;
 
 export interface Identity {
   id: string;
@@ -107,7 +108,7 @@ export interface WeeklyCheckIn {
   adjustment: string;
 }
 
-export type ReasonTag = 'Time' | 'Energy' | 'Environment' | 'Emotion' | 'Overload' | 'Forgetfulness' | 'Unclear';
+export type ReasonTag = 'Time' | 'Energy' | 'Environment' | 'Emotion' | 'Overload' | 'Forgetfulness' | 'Unclear' | 'Too Large' | 'Resistance';
 
 export interface FrictionEvent {
   id: string;
@@ -266,6 +267,15 @@ export const DEFAULT_HOME_SECTIONS: SectionConfig[] = [
   { id: 'tasks', visible: true },
 ];
 
+export type HabitsHubSectionId = 'search-filters' | 'heat-map' | 'recommendations' | 'habit-list';
+
+export const DEFAULT_HABITS_HUB_SECTIONS: SectionConfig[] = [
+  { id: 'search-filters', visible: true },
+  { id: 'heat-map', visible: true },
+  { id: 'recommendations', visible: true },
+  { id: 'habit-list', visible: true },
+];
+
 export const DEFAULT_DASHBOARD_WIDGETS: DashboardWidget[] = [
   { id: 'north-star', visible: true },
   { id: 'rhythm-score', visible: true },
@@ -297,6 +307,7 @@ interface AppState {
   coachSections: SectionConfig[];
   reviewSections: SectionConfig[];
   homeSections: SectionConfig[];
+  habitsHubSections: SectionConfig[];
   notificationSettings: NotificationSettings;
   coachNudges: CoachNudge[];
   reminderEvents: ReminderEvent[];
@@ -314,6 +325,7 @@ interface AppState {
   commitmentBudgetBase: number;
   strategicIntent: string;
   advisoryMode: 'reflective' | 'executive';
+  customDomains: string[];
 
   systemUpgrades: {
     keystoneMode: boolean;
@@ -361,11 +373,15 @@ interface AppState {
   addTaskLabel: (label: string) => void;
   removeTaskLabel: (label: string) => void;
   renameTaskLabel: (oldName: string, newName: string) => void;
+  addCustomDomain: (domain: string) => void;
+  removeCustomDomain: (domain: string) => void;
+  renameCustomDomain: (oldName: string, newName: string) => void;
+  getAllDomains: () => string[];
   setDashboardWidgets: (widgets: DashboardWidget[]) => void;
   toggleDashboardWidget: (id: DashboardWidgetId) => void;
   moveDashboardWidget: (id: DashboardWidgetId, direction: 'up' | 'down') => void;
-  toggleSectionVisibility: (page: 'coach' | 'review' | 'home', id: string) => void;
-  moveSection: (page: 'coach' | 'review' | 'home', id: string, direction: 'up' | 'down') => void;
+  toggleSectionVisibility: (page: 'coach' | 'review' | 'home' | 'habitsHub', id: string) => void;
+  moveSection: (page: 'coach' | 'review' | 'home' | 'habitsHub', id: string, direction: 'up' | 'down') => void;
   updateNotificationSettings: (settings: Partial<NotificationSettings>) => void;
   updateReminderSchedule: (type: ReminderType, updates: Partial<ReminderSchedule>) => void;
   addCoachNudge: (nudge: Omit<CoachNudge, 'id' | 'createdAt' | 'dismissed'>) => string;
@@ -420,6 +436,7 @@ export const useStore = create<AppState>()(
       coachSections: DEFAULT_COACH_SECTIONS,
       reviewSections: DEFAULT_REVIEW_SECTIONS,
       homeSections: DEFAULT_HOME_SECTIONS,
+      habitsHubSections: DEFAULT_HABITS_HUB_SECTIONS,
       notificationSettings: DEFAULT_NOTIFICATION_SETTINGS,
       coachNudges: [],
       reminderEvents: [],
@@ -437,6 +454,7 @@ export const useStore = create<AppState>()(
       commitmentBudgetBase: 100,
       strategicIntent: '',
       advisoryMode: 'reflective' as 'reflective' | 'executive',
+      customDomains: [] as string[],
       colorTheme: 'auto' as 'auto' | 'morning' | 'day' | 'evening' | 'night',
       systemUpgrades: {
         keystoneMode: false,
@@ -545,6 +563,7 @@ export const useStore = create<AppState>()(
             seasonNotes: state.seasonNotes ?? get().seasonNotes,
             strategicIntent: state.strategicIntent ?? get().strategicIntent,
             advisoryMode: state.advisoryMode ?? get().advisoryMode,
+            customDomains: state.customDomains ?? get().customDomains,
             colorTheme: state.colorTheme ?? get().colorTheme,
             strictMode: state.strictMode ? { ...DEFAULT_STRICT_MODE, ...state.strictMode } : get().strictMode,
             commitmentBudgetBase: state.commitmentBudgetBase ?? get().commitmentBudgetBase,
@@ -965,6 +984,63 @@ export const useStore = create<AppState>()(
           return { taskLabels: newLabels, tasks: updatedTasks };
         });
       },
+      addCustomDomain: (domain) => {
+        set((state) => {
+          const all = [...DEFAULT_DOMAINS, ...state.customDomains];
+          if (all.includes(domain)) return state;
+          const newCustom = [...state.customDomains, domain];
+          api.setSetting("customDomains", newCustom).catch(console.error);
+          return { customDomains: newCustom };
+        });
+      },
+      removeCustomDomain: (domain) => {
+        set((state) => {
+          const newCustom = state.customDomains.filter(d => d !== domain);
+          api.setSetting("customDomains", newCustom).catch(console.error);
+          const updatedHabits = state.habits.map(h => {
+            if (h.domain !== domain) return h;
+            api.updateHabit(h.id, { domain: null }).catch(console.error);
+            return { ...h, domain: null };
+          });
+          const updatedTasks = state.tasks.map(t => {
+            if (t.domain !== domain) return t;
+            api.updateTask(t.id, { domain: null }).catch(console.error);
+            return { ...t, domain: null };
+          });
+          const updatedGoals = state.goals.map(g => {
+            if (g.domain !== domain) return g;
+            api.updateGoal(g.id, { domain: null }).catch(console.error);
+            return { ...g, domain: null };
+          });
+          return { customDomains: newCustom, habits: updatedHabits, tasks: updatedTasks, goals: updatedGoals };
+        });
+      },
+      renameCustomDomain: (oldName, newName) => {
+        set((state) => {
+          const newCustom = state.customDomains.map(d => d === oldName ? newName : d);
+          api.setSetting("customDomains", newCustom).catch(console.error);
+          const updatedHabits = state.habits.map(h => {
+            if (h.domain !== oldName) return h;
+            api.updateHabit(h.id, { domain: newName }).catch(console.error);
+            return { ...h, domain: newName };
+          });
+          const updatedTasks = state.tasks.map(t => {
+            if (t.domain !== oldName) return t;
+            api.updateTask(t.id, { domain: newName }).catch(console.error);
+            return { ...t, domain: newName };
+          });
+          const updatedGoals = state.goals.map(g => {
+            if (g.domain !== oldName) return g;
+            api.updateGoal(g.id, { domain: newName }).catch(console.error);
+            return { ...g, domain: newName };
+          });
+          return { customDomains: newCustom, habits: updatedHabits, tasks: updatedTasks, goals: updatedGoals };
+        });
+      },
+      getAllDomains: () => {
+        const state = get();
+        return [...DEFAULT_DOMAINS, ...state.customDomains];
+      },
       setDashboardWidgets: (widgets) => set({ dashboardWidgets: widgets }),
       toggleDashboardWidget: (id) => {
         set((state) => ({
@@ -984,13 +1060,13 @@ export const useStore = create<AppState>()(
       },
       toggleSectionVisibility: (page, id) => {
         set((state) => {
-          const key = page === 'coach' ? 'coachSections' : page === 'review' ? 'reviewSections' : 'homeSections';
+          const key = page === 'coach' ? 'coachSections' : page === 'review' ? 'reviewSections' : page === 'habitsHub' ? 'habitsHubSections' : 'homeSections';
           return { [key]: state[key].map(s => s.id === id ? { ...s, visible: !s.visible } : s) };
         });
       },
       moveSection: (page, id, direction) => {
         set((state) => {
-          const key = page === 'coach' ? 'coachSections' : page === 'review' ? 'reviewSections' : 'homeSections';
+          const key = page === 'coach' ? 'coachSections' : page === 'review' ? 'reviewSections' : page === 'habitsHub' ? 'habitsHubSections' : 'homeSections';
           const sections = [...state[key]];
           const idx = sections.findIndex(s => s.id === id);
           if (idx < 0) return state;
@@ -1193,7 +1269,7 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'life-compass-storage',
-      version: 4,
+      version: 6,
       partialize: (state) => {
         const { hydrated, ...rest } = state;
         return rest;
@@ -1244,6 +1320,12 @@ export const useStore = create<AppState>()(
         }
         if (version < 4) {
           persisted.colorTheme = persisted.colorTheme ?? 'auto';
+        }
+        if (version < 5) {
+          persisted.habitsHubSections = persisted.habitsHubSections ?? DEFAULT_HABITS_HUB_SECTIONS;
+        }
+        if (version < 6) {
+          persisted.customDomains = persisted.customDomains ?? [];
         }
         return persisted;
       },

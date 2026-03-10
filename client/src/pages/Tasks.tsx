@@ -4,7 +4,7 @@ import { useDebounce } from "@/lib/useDebounce";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useStore, Task, DOMAINS, Domain } from "@/store/useStore";
+import { useStore, Task, Domain } from "@/store/useStore";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -21,7 +21,8 @@ import { cn } from "@/lib/utils";
 import { hapticLight, hapticMedium, hapticSuccess, hapticWarning } from "@/lib/haptics";
 
 export default function Tasks() {
-  const { tasks, habits, goals, addTask, updateTask, deleteTask, applyGrace, taskLabels, addTaskLabel, removeTaskLabel, renameTaskLabel } = useStore();
+  const { tasks, habits, goals, addTask, updateTask, deleteTask, applyGrace, taskLabels, addTaskLabel, removeTaskLabel, renameTaskLabel, getAllDomains } = useStore();
+  const allDomains = getAllDomains();
   const [activeTab, setActiveTab] = useState("today");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -240,7 +241,7 @@ export default function Tasks() {
                   <SelectTrigger className="bg-muted/30 border-none rounded-xl h-11" data-testid="select-domain"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">No Domain</SelectItem>
-                    {DOMAINS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                    {allDomains.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -250,6 +251,13 @@ export default function Tasks() {
               <Select value={formData.goalId} onValueChange={v => setFormData({...formData, goalId: v})}>
                 <SelectTrigger className="bg-muted/30 border-none rounded-xl h-11" data-testid="select-goal"><SelectValue /></SelectTrigger>
                 <SelectContent><SelectItem value="none">No Goal</SelectItem>{goals.map(g => <SelectItem key={g.id} value={g.id}>{g.title}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase text-muted-foreground ml-1">Habit</label>
+              <Select value={formData.habitId} onValueChange={v => setFormData({...formData, habitId: v})}>
+                <SelectTrigger className="bg-muted/30 border-none rounded-xl h-11" data-testid="select-habit"><SelectValue /></SelectTrigger>
+                <SelectContent><SelectItem value="none">No Habit</SelectItem>{habits.map(h => <SelectItem key={h.id} value={h.id}>{h.title}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
@@ -470,10 +478,12 @@ export default function Tasks() {
 }
 
 function TaskCard({ task, onEdit, onRecover }: { task: Task, onEdit: () => void, onRecover?: () => void }) {
-  const { updateTask, deleteTask } = useStore();
+  const { updateTask, deleteTask, goals, habits } = useStore();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const displayLabels = task.labels.filter(l => l !== 'Recovery');
   const isRecovery = task.labels.includes('Recovery');
+  const linkedGoal = task.goalId ? goals.find(g => g.id === task.goalId) : null;
+  const linkedHabit = task.habitId ? habits.find(h => h.id === task.habitId) : null;
   return (
     <>
       <Card data-testid={`card-task-${task.id}`} className={cn("border-none bg-card shadow-sm rounded-2xl overflow-hidden transition-all active:scale-[0.99]", task.completed && "opacity-60")}>
@@ -503,6 +513,20 @@ function TaskCard({ task, onEdit, onRecover }: { task: Task, onEdit: () => void,
               {task.dueDate && <span className="text-[8px] font-bold text-muted-foreground/60 uppercase">{task.dueDate === new Date().toLocaleDateString('en-CA') ? 'Today' : task.dueDate}</span>}
               {isRecovery && <Badge className="text-[7px] bg-secondary/10 text-secondary border-none uppercase h-4">Recovery</Badge>}
             </div>
+            {(linkedGoal || linkedHabit) && (
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                {linkedGoal && (
+                  <Badge className="text-[7px] bg-emerald-500/5 text-emerald-600/70 border-none font-medium h-4 px-1.5" data-testid={`badge-goal-${task.id}`}>
+                    → Goal: {linkedGoal.title}
+                  </Badge>
+                )}
+                {linkedHabit && (
+                  <Badge className="text-[7px] bg-blue-500/5 text-blue-600/70 border-none font-medium h-4 px-1.5" data-testid={`badge-habit-${task.id}`}>
+                    → Habit: {linkedHabit.title}
+                  </Badge>
+                )}
+              </div>
+            )}
           </div>
           <div className="flex gap-1 shrink-0">
             {onRecover && !task.completed && (

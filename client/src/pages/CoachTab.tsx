@@ -40,8 +40,9 @@ export default function CoachTab() {
     systemUpgrades, updateSystemUpgrade, identities, seasonMode, setSeasonMode,
     frictionEvents, setGraceConfig, advisoryMode, setAdvisoryMode,
     coachSections, toggleSectionVisibility, moveSection,
-    colorTheme, setColorTheme
+    colorTheme, setColorTheme, getAllDomains
   } = store;
+  const allDomains = getAllDomains();
   const [, setLocation] = useLocation();
   const [isGraceDialogOpen, setIsGraceDialogOpen] = useState(false);
   const [graceTarget, setGraceTarget] = useState<{id: string, type: 'habit' | 'task'} | null>(null);
@@ -49,6 +50,15 @@ export default function CoachTab() {
   const [isSeasonSheetOpen, setIsSeasonSheetOpen] = useState(false);
   const [pendingSeasonMode, setPendingSeasonMode] = useState<SeasonMode | null>(null);
   const [isLayoutSettingsOpen, setIsLayoutSettingsOpen] = useState(false);
+  const [coachViewFilter, setCoachViewFilter] = useState<'daily' | 'weekly'>('weekly');
+
+  const WEEKLY_ONLY_SECTIONS = useMemo(() => new Set([
+    'narrative', 'advisory', 'drift', 'trajectory', 'gravity',
+    'evidence', 'streaks', 'proof', 'alignment',
+  ]), []);
+
+  const DAILY_ONLY_SECTIONS = useMemo(() => new Set<string>([
+  ]), []);
 
   const orderedSections = useMemo(() => {
     if (coachSections.length === 0) return DEFAULT_COACH_SECTIONS;
@@ -57,8 +67,12 @@ export default function CoachTab() {
   }, [coachSections]);
   const isSectionVisible = useCallback((id: string) => {
     const s = orderedSections.find(s => s.id === id);
-    return s ? s.visible : true;
-  }, [orderedSections]);
+    const layoutVisible = s ? s.visible : true;
+    if (!layoutVisible) return false;
+    if (coachViewFilter === 'daily' && WEEKLY_ONLY_SECTIONS.has(id)) return false;
+    if (coachViewFilter === 'weekly' && DAILY_ONLY_SECTIONS.has(id)) return false;
+    return true;
+  }, [orderedSections, coachViewFilter, WEEKLY_ONLY_SECTIONS, DAILY_ONLY_SECTIONS]);
   const sectionOrder = useCallback((id: string) => {
     const idx = orderedSections.findIndex(s => s.id === id);
     return idx >= 0 ? idx : 99;
@@ -196,8 +210,8 @@ export default function CoachTab() {
   const weeklyNarrative = useMemo(() => generateWeeklyNarrative({
     identities, goals, habits, tasks, logs, dailyRhythms, frictionEvents,
     proofEvents: store.proofEvents, driftAlerts, weeklyCheckIns, seasonMode,
-    strategicIntent: combinedIntent,
-  }), [identities, goals, habits, tasks, logs, dailyRhythms, frictionEvents, store.proofEvents, driftAlerts, weeklyCheckIns, seasonMode, combinedIntent]);
+    strategicIntent: combinedIntent, allDomains,
+  }), [identities, goals, habits, tasks, logs, dailyRhythms, frictionEvents, store.proofEvents, driftAlerts, weeklyCheckIns, seasonMode, combinedIntent, allDomains]);
 
   const trajectory = useMemo(() => computeTrajectory({
     habits, goals, tasks, logs, dailyRhythms, frictionEvents, identities, seasonMode,
@@ -511,6 +525,29 @@ export default function CoachTab() {
           </Button>
         </div>
       </header>
+
+      <div className="flex items-center justify-center" data-testid="coach-view-filter">
+        <div className="flex items-center gap-1 bg-muted/30 rounded-full p-0.5">
+          <button
+            onClick={() => { setCoachViewFilter('daily'); hapticLight(); }}
+            className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wide transition-all min-h-[36px] ${
+              coachViewFilter === 'daily' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground'
+            }`}
+            data-testid="button-coach-filter-daily"
+          >
+            Daily
+          </button>
+          <button
+            onClick={() => { setCoachViewFilter('weekly'); hapticLight(); }}
+            className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wide transition-all min-h-[36px] ${
+              coachViewFilter === 'weekly' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground'
+            }`}
+            data-testid="button-coach-filter-weekly"
+          >
+            Weekly
+          </button>
+        </div>
+      </div>
 
       <Sheet open={isSeasonSheetOpen} onOpenChange={setIsSeasonSheetOpen}>
         <SheetContent side="bottom" className="rounded-t-[2rem] max-h-[85vh] overflow-y-auto overscroll-contain pb-8" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -1408,6 +1445,38 @@ export default function CoachTab() {
                           });
                           hapticMedium();
                           toast.success("Supporting task created");
+                        } else if (s.type === 'break-down') {
+                          addTask({
+                            title: `Break down: ${s.entityTitle}`,
+                            energy: 'Low',
+                            emotion: '',
+                            completed: false,
+                            habitId: null,
+                            goalId: null,
+                            domain: null,
+                            dueDate: new Date().toLocaleDateString('en-CA'),
+                            priority: 'High',
+                            label: '',
+                            labels: ['Deep Work'],
+                          });
+                          hapticMedium();
+                          toast.success("Breakdown task created");
+                        } else if (s.type === 'explore-resistance') {
+                          addTask({
+                            title: `Reflect: why resistance to ${s.entityTitle}?`,
+                            energy: 'Low',
+                            emotion: '',
+                            completed: false,
+                            habitId: null,
+                            goalId: null,
+                            domain: null,
+                            dueDate: new Date().toLocaleDateString('en-CA'),
+                            priority: 'Medium',
+                            label: '',
+                            labels: ['Recovery'],
+                          });
+                          hapticMedium();
+                          toast.success("Reflection task created");
                         }
                       }}
                       data-testid={`button-friction-action-${i}`}

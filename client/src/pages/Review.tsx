@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { useStore, DOMAINS, Domain, DEFAULT_REVIEW_SECTIONS, type SectionConfig } from "@/store/useStore";
+import { useStore, Domain, DEFAULT_REVIEW_SECTIONS, type SectionConfig } from "@/store/useStore";
 import { 
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger 
 } from "@/components/ui/dialog";
@@ -63,8 +63,10 @@ export default function Review() {
     logs, dailyRhythms, frictionEvents, weeklyCheckIns,
     systemUpgrades, updateSystemUpgrade, setGraceConfig,
     notificationSettings, proofEvents, commitmentBudgetBase, strategicIntent, setStrategicIntent,
-    reviewSections, toggleSectionVisibility, moveSection
+    reviewSections, toggleSectionVisibility, moveSection,
+    getAllDomains
   } = useStore();
+  const allDomains = getAllDomains();
   const [, setLocation] = useLocation();
   const todayDate = useMemo(() => new Date().toLocaleDateString('en-CA'), []);
   
@@ -128,8 +130,8 @@ export default function Review() {
 
   const narrative = useMemo(() => generateWeeklyNarrative({
     identities, goals, habits, tasks, logs, dailyRhythms, frictionEvents, proofEvents, driftAlerts, weeklyCheckIns, seasonMode,
-    strategicIntent: combinedIntent,
-  }), [identities, goals, habits, tasks, logs, dailyRhythms, frictionEvents, proofEvents, driftAlerts, weeklyCheckIns, seasonMode, combinedIntent]);
+    strategicIntent: combinedIntent, allDomains,
+  }), [identities, goals, habits, tasks, logs, dailyRhythms, frictionEvents, proofEvents, driftAlerts, weeklyCheckIns, seasonMode, combinedIntent, allDomains]);
 
 
   const [resetStep, setResetStep] = useState(0);
@@ -532,7 +534,7 @@ export default function Review() {
                     <div className="space-y-3">
                       <h4 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Domain Distribution</h4>
                       <div className="flex flex-wrap gap-2">
-                        {DOMAINS.map(d => <Badge key={d} variant="outline" className="text-[9px] h-5 px-2 border-muted-foreground/20 font-bold uppercase tracking-tighter">{d}</Badge>)}
+                        {allDomains.map(d => <Badge key={d} variant="outline" className="text-[9px] h-5 px-2 border-muted-foreground/20 font-bold uppercase tracking-tighter">{d}</Badge>)}
                       </div>
                     </div>
                     <Button onClick={() => setResetStep(2)} className="w-full h-14 rounded-2xl font-bold shadow-lg mt-10">Continue Review <ArrowRight size={18} className="ml-2"/></Button>
@@ -545,7 +547,7 @@ export default function Review() {
                       <div className="space-y-3">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Focus Domains</label>
                         <div className="grid grid-cols-2 gap-2.5">
-                          {DOMAINS.map(d => (
+                          {allDomains.map(d => (
                             <Button 
                               key={d} 
                               variant={resetData.focusDomains.includes(d) ? "default" : "outline"} 
@@ -1017,12 +1019,12 @@ export default function Review() {
               {(() => {
                 const domainCounts: Record<string, number> = {};
                 const focusDomains = currentPlan?.focusDomains || [];
-                DOMAINS.forEach(d => { domainCounts[d] = 0; });
+                allDomains.forEach(d => { domainCounts[d] = 0; });
                 tasks.forEach(t => { if (t.domain) domainCounts[t.domain] = (domainCounts[t.domain] || 0) + 1; });
                 habits.filter(h => !h.isPaused).forEach(h => { if (h.domain) domainCounts[h.domain] = (domainCounts[h.domain] || 0) + 2; });
                 goals.filter(g => !g.isPaused).forEach(g => { if (g.domain) domainCounts[g.domain] = (domainCounts[g.domain] || 0) + 3; });
                 const totalActivity = Object.values(domainCounts).reduce((a, b) => a + b, 0);
-                const sortedDomains = DOMAINS.map(d => ({
+                const sortedDomains = allDomains.map(d => ({
                   domain: d,
                   count: domainCounts[d] || 0,
                   pct: totalActivity > 0 ? Math.round(((domainCounts[d] || 0) / totalActivity) * 100) : 0,

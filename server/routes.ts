@@ -186,7 +186,7 @@ export async function registerRoutes(
       storage.getDailyRhythms(),
     ]);
 
-    const [currentQuarterKey, graceDaysPerWeek, graceDaysUsedThisWeek, taskLabels, systemUpgrades, seasonMode, seasonStartDate, seasonNotes, strictMode, commitmentBudgetBase, strategicIntent, advisoryMode] = await Promise.all([
+    const [currentQuarterKey, graceDaysPerWeek, graceDaysUsedThisWeek, taskLabels, systemUpgrades, seasonMode, seasonStartDate, seasonNotes, strictMode, commitmentBudgetBase, strategicIntent, advisoryMode, customDomains, colorTheme] = await Promise.all([
       storage.getSetting("currentQuarterKey"),
       storage.getSetting("graceDaysPerWeek"),
       storage.getSetting("graceDaysUsedThisWeek"),
@@ -199,6 +199,8 @@ export async function registerRoutes(
       storage.getSetting("commitmentBudgetBase"),
       storage.getSetting("strategicIntent"),
       storage.getSetting("advisoryMode"),
+      storage.getSetting("customDomains"),
+      storage.getSetting("colorTheme"),
     ]);
 
     const rhythmMap: Record<string, any> = {};
@@ -225,6 +227,8 @@ export async function registerRoutes(
       commitmentBudgetBase: commitmentBudgetBase ?? null,
       strategicIntent: strategicIntent ?? null,
       advisoryMode: advisoryMode ?? null,
+      customDomains: customDomains ?? [],
+      colorTheme: colorTheme ?? null,
     });
   }));
 
